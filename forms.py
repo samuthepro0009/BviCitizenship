@@ -156,13 +156,7 @@ class CitizenshipModal(discord.ui.Modal, title='BVI Citizenship Application'):
             max_length=settings.forms.criminal_record_max_length
         )
         
-        self.additional_info = discord.ui.TextInput(
-            label=settings.forms.additional_info_label,
-            style=discord.TextStyle.paragraph,
-            placeholder=settings.forms.additional_info_placeholder,
-            required=False,
-            max_length=settings.forms.additional_info_max_length
-        )
+        
 
     async def on_submit(self, interaction: discord.Interaction):
         """Handle form submission"""
@@ -175,7 +169,7 @@ class CitizenshipModal(discord.ui.Modal, title='BVI Citizenship Application'):
                 discord_username=self.discord_username.value,
                 reason=self.reason.value,
                 criminal_record=self.criminal_record.value,
-                additional_info=self.additional_info.value
+                additional_info=""  # Removed from form due to Discord component limits
             )
 
             # Get the bot instance to access pending applications
