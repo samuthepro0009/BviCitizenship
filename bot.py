@@ -92,6 +92,10 @@ class BVIBot(commands.Bot):
         """Called when the bot is ready"""
         print(f"🤖 {self.user} connected to Discord")
         
+        # Clear any existing applications to fix submitted_at errors
+        self.pending_applications.clear()
+        print("🧹 Cleared existing applications to prevent errors")
+        
         try:
             synced = await self.tree.sync()
             print(f"⚡ Synced {len(synced)} slash commands")

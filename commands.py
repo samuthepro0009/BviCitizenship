@@ -41,17 +41,17 @@ class CommandHandlers:
                            "*All applications are reviewed by our certified citizenship management team*"
             )
 
-            # Set the professional banner image (separate from icon)
-            embed.set_image(url="https://i.imgur.com/bvi-IFnbn94.png")
+            # Set the professional banner image (using a working image)
+            embed.set_image(url="https://i.imgur.com/dOvxZF7.png")
 
-            # Set the footer with the new icon
+            # Set the footer with the new icon (using a working image)
             embed.set_footer(
                 text="Government of the British Virgin Islands | Citizenship Department", 
-                icon_url="https://i.imgur.com/test-CrYmk02.png"
+                icon_url="https://i.imgur.com/dOvxZF7.png"
             )
 
             # Add thumbnail for additional branding
-            embed.set_thumbnail(url="https://i.imgur.com/test-CrYmk02.png")
+            embed.set_thumbnail(url="https://i.imgur.com/dOvxZF7.png")
 
             # Create the interactive dashboard
             dashboard = CitizenshipDashboard()
