@@ -40,11 +40,8 @@ class CommandHandlers:
     async def handle_citizenship_accept(self, interaction: discord.Interaction, user: discord.Member):
         """Handle citizenship acceptance command"""
         # Check citizenship management permissions (admin OR citizenship manager)
-        if not PermissionManager.can_manage_citizenship(
-            interaction.user, 
-            settings.get_admin_role_id(), 
-            settings.get_citizenship_manager_role_id()
-        ):
+        user_role_ids = [role.id for role in interaction.user.roles]
+        if not settings.has_citizenship_permission(user_role_ids):
             await interaction.response.send_message(
                 settings.messages.no_citizenship_permission,
                 ephemeral=True
@@ -89,11 +86,8 @@ class CommandHandlers:
                                        user: discord.Member, reason: str = "No reason provided"):
         """Handle citizenship decline command"""
         # Check citizenship management permissions (admin OR citizenship manager)
-        if not PermissionManager.can_manage_citizenship(
-            interaction.user, 
-            settings.get_admin_role_id(), 
-            settings.get_citizenship_manager_role_id()
-        ):
+        user_role_ids = [role.id for role in interaction.user.roles]
+        if not settings.has_citizenship_permission(user_role_ids):
             await interaction.response.send_message(
                 settings.messages.no_citizenship_permission,
                 ephemeral=True
@@ -139,7 +133,8 @@ class CommandHandlers:
                                place_id: str, reason: str = "No reason provided"):
         """Handle Roblox ban command"""
         # Check admin permissions (only admins can ban, not citizenship managers)
-        if not PermissionManager.can_ban_users(interaction.user, settings.get_admin_role_id()):
+        user_role_ids = [role.id for role in interaction.user.roles]
+        if not settings.has_admin_permission(user_role_ids):
             await interaction.response.send_message(
                 settings.messages.no_ban_permission,
                 ephemeral=True

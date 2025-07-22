@@ -121,10 +121,14 @@ The application is designed for cloud deployment with the following characterist
 
 ## Recent Changes
 
-### July 22, 2025 - Permission System Enhancement
-- **Enhanced Permission Management**: Implemented dual-tier permission system
-- **Citizenship Manager Role**: New role for users who can approve/decline applications but cannot ban users
-- **Admin Role**: Retains full permissions including banning capabilities
-- **Improved Error Messages**: Added specific permission error messages for different command types
-- **Configuration Updates**: Added CITIZENSHIP_MANAGER_ROLE_ID environment variable
-- **Health Monitoring**: Updated status endpoint to include citizenship manager role configuration
+### July 22, 2025 - Replit Migration & Configuration Enhancement
+- **Replit Migration**: Successfully migrated from Replit Agent to standard Replit environment
+- **Enhanced Role Configuration**: Reorganized role management with cleaner, section-based configuration
+  - Added ADMIN_ROLES list for easy management of multiple admin roles
+  - Added CITIZENSHIP_MANAGER_ROLES list for citizenship-only permissions
+  - Implemented new RoleConfig class with helper methods
+  - Updated permission checking to use new role system
+- **Environment Setup**: Configured Discord bot token and session secrets
+- **Workflow Configuration**: Set up proper Replit workflows for bot execution
+- **Code Quality**: Updated all command handlers to use new permission system
+- **Legacy Support**: Maintained backward compatibility with environment variables

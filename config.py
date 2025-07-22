@@ -97,6 +97,51 @@ class CommandConfig:
     ban_place_id_param: str = "The Roblox place ID to ban from"
     ban_reason_param: str = "Reason for the ban"
 
+# =========================================
+# ROLE CONFIGURATION
+# =========================================
+
+# Admin roles (full permissions: ban users, manage citizenship)
+ADMIN_ROLES = [
+    # Add your admin role IDs here, one per line
+    # Example:
+    # 112121,
+    # 123123213,
+]
+
+# Citizenship manager roles (citizenship management only, cannot ban users)
+CITIZENSHIP_MANAGER_ROLES = [
+    # Add your citizenship manager role IDs here, one per line
+    # Example:
+    # 123123213213213,
+    # 8425523532,
+]
+
+@dataclass
+class RoleConfig:
+    """Configuration for Discord roles"""
+    admin_roles: Optional[List[int]] = None
+    citizenship_manager_roles: Optional[List[int]] = None
+    
+    def __post_init__(self):
+        """Initialize role lists from global constants"""
+        if self.admin_roles is None:
+            self.admin_roles = ADMIN_ROLES.copy()
+        if self.citizenship_manager_roles is None:
+            self.citizenship_manager_roles = CITIZENSHIP_MANAGER_ROLES.copy()
+    
+    def is_admin(self, user_roles: List[int]) -> bool:
+        """Check if user has admin permissions"""
+        return any(role_id in self.admin_roles for role_id in user_roles)
+    
+    def is_citizenship_manager(self, user_roles: List[int]) -> bool:
+        """Check if user has citizenship management permissions"""
+        return any(role_id in self.citizenship_manager_roles for role_id in user_roles)
+    
+    def has_citizenship_permissions(self, user_roles: List[int]) -> bool:
+        """Check if user has citizenship management permissions (admin OR citizenship manager)"""
+        return self.is_admin(user_roles) or self.is_citizenship_manager(user_roles)
+
 @dataclass
 class BotConfig:
     """Main bot configuration"""
@@ -104,7 +149,7 @@ class BotConfig:
     bot_name: str = "British Virgin Islands"
     command_prefix: str = "!"
     
-    # Environment variables
+    # Environment variables (legacy support)
     discord_token_env: str = "DISCORD_BOT_TOKEN"
     admin_role_id_env: str = "ADMIN_ROLE_ID"
     citizenship_manager_role_id_env: str = "CITIZENSHIP_MANAGER_ROLE_ID"
@@ -136,24 +181,55 @@ class Settings:
         self.forms = FormConfig()
         self.commands = CommandConfig()
         self.bot = BotConfig()
+        self.roles = RoleConfig()
         
     def get_discord_token(self) -> Optional[str]:
         """Get Discord bot token from environment"""
         return os.getenv(self.bot.discord_token_env)
     
     def get_admin_role_id(self) -> int:
-        """Get admin role ID from environment"""
+        """Get admin role ID from environment (legacy support)"""
         try:
             return int(os.getenv(self.bot.admin_role_id_env, str(self.bot.default_admin_role_id)))
         except (ValueError, TypeError):
             return self.bot.default_admin_role_id
     
     def get_citizenship_manager_role_id(self) -> int:
-        """Get citizenship manager role ID from environment"""
+        """Get citizenship manager role ID from environment (legacy support)"""
         try:
             return int(os.getenv(self.bot.citizenship_manager_role_id_env, str(self.bot.default_citizenship_manager_role_id)))
         except (ValueError, TypeError):
             return self.bot.default_citizenship_manager_role_id
+    
+    def get_admin_roles(self) -> List[int]:
+        """Get list of admin role IDs"""
+        # Combine configured roles with legacy environment variable
+        roles = self.roles.admin_roles.copy()
+        legacy_role = self.get_admin_role_id()
+        if legacy_role != 0 and legacy_role not in roles:
+            roles.append(legacy_role)
+        return roles
+    
+    def get_citizenship_manager_roles(self) -> List[int]:
+        """Get list of citizenship manager role IDs"""
+        # Combine configured roles with legacy environment variable
+        roles = self.roles.citizenship_manager_roles.copy()
+        legacy_role = self.get_citizenship_manager_role_id()
+        if legacy_role != 0 and legacy_role not in roles:
+            roles.append(legacy_role)
+        return roles
+    
+    def has_admin_permission(self, user_roles: List[int]) -> bool:
+        """Check if user has admin permissions"""
+        admin_roles = self.get_admin_roles()
+        return any(role_id in admin_roles for role_id in user_roles)
+    
+    def has_citizenship_permission(self, user_roles: List[int]) -> bool:
+        """Check if user has citizenship management permissions"""
+        admin_roles = self.get_admin_roles()
+        citizenship_roles = self.get_citizenship_manager_roles()
+        all_authorized_roles = admin_roles + citizenship_roles
+        return any(role_id in all_authorized_roles for role_id in user_roles)
     
     def get_roblox_api_key(self) -> str:
         """Get Roblox API key from environment"""
