@@ -47,7 +47,7 @@ def status():
 def run_flask():
     """Run the Flask server"""
     port = settings.get_port()
-    logger.info(f"Starting Flask server on port {port}")
+    print(f"🌐 Starting health check server on port {port}")
     
     app.run(
         host='0.0.0.0', 
@@ -63,19 +63,17 @@ def ping_self():
     ping_interval = settings.bot.keep_alive_interval
     timeout = settings.bot.api_timeout
     
-    logger.info(f"Starting keep-alive pings every {ping_interval} seconds to {base_url}")
+    print(f"💓 Keep-alive monitoring started (every {ping_interval}s)")
     
     while True:
         try:
             response = requests.get(f"{base_url}/health", timeout=timeout)
-            if response.status_code == 200:
-                logger.info("Keep-alive ping successful")
-            else:
-                logger.warning(f"Keep-alive ping failed with status: {response.status_code}")
+            if response.status_code != 200:
+                print(f"⚠️ Keep-alive ping failed with status: {response.status_code}")
         except requests.RequestException as e:
-            logger.error(f"Keep-alive ping error: {e}")
+            print(f"❌ Keep-alive ping error: {e}")
         except Exception as e:
-            logger.error(f"Unexpected error during keep-alive ping: {e}")
+            print(f"❌ Unexpected error during keep-alive ping: {e}")
         
         # Wait before next ping
         time.sleep(ping_interval)
@@ -94,10 +92,10 @@ def keep_alive():
         ping_thread = threading.Thread(target=ping_self, daemon=True)
         ping_thread.start()
         
-        logger.info("Keep-alive service started successfully")
+        print("✅ Keep-alive service started successfully")
         
     except Exception as e:
-        logger.error(f"Failed to start keep-alive service: {e}")
+        print(f"❌ Failed to start keep-alive service: {e}")
 
 if __name__ == "__main__":
     keep_alive()

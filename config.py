@@ -196,8 +196,8 @@ class BotConfig:
     api_timeout: int = 10  # seconds
     
     # Logging
-    log_level: int = logging.INFO
-    log_format: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    log_level: int = logging.WARNING
+    log_format: str = "%(levelname)s | %(name)s | %(message)s"
 
 class Settings:
     """Central settings manager"""
@@ -276,9 +276,20 @@ class Settings:
     
     def setup_logging(self):
         """Configure logging settings"""
+        # Suppress unnecessary logs from external libraries
+        logging.getLogger('discord').setLevel(logging.ERROR)
+        logging.getLogger('discord.client').setLevel(logging.ERROR)
+        logging.getLogger('discord.gateway').setLevel(logging.ERROR)
+        logging.getLogger('discord.http').setLevel(logging.ERROR)
+        logging.getLogger('discord.ext.commands.bot').setLevel(logging.ERROR)
+        logging.getLogger('werkzeug').setLevel(logging.ERROR)
+        logging.getLogger('urllib3').setLevel(logging.ERROR)
+        
+        # Configure main logging
         logging.basicConfig(
             level=self.bot.log_level,
-            format=self.bot.log_format
+            format=self.bot.log_format,
+            force=True
         )
         return logging.getLogger(__name__)
 

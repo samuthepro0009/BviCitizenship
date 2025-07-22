@@ -90,29 +90,29 @@ class BVIBot(commands.Bot):
 
     async def on_ready(self):
         """Called when the bot is ready"""
-        logger.info(f'{self.user} has connected to Discord!')
+        print(f"🤖 {self.user} connected to Discord")
         
         try:
             synced = await self.tree.sync()
-            logger.info(f"Synced {len(synced)} command(s)")
+            print(f"⚡ Synced {len(synced)} slash commands")
             
-            # Log current configuration
-            logger.info(f"Admin Role ID: {self.admin_role_id}")
-            logger.info(f"Citizenship Manager Role ID: {self.citizenship_manager_role_id}")
-            logger.info(f"Channels: log={settings.channels.citizenship_log}, "
-                       f"status={settings.channels.citizenship_status}, "
-                       f"mod={settings.channels.mod_log}")
+            # Show configuration summary
+            admin_roles = settings.get_admin_roles()
+            citizenship_roles = settings.get_citizenship_manager_roles()
+            print(f"🔧 Admin roles configured: {len(admin_roles)} roles")
+            print(f"🔧 Citizenship manager roles: {len(citizenship_roles)} roles")
+            print(f"🚀 BVI Discord Bot ready for citizenship applications!")
             
         except Exception as e:
-            logger.error(f"Failed to sync commands: {e}")
+            logger.error(f"❌ Failed to sync commands: {e}")
 
     async def on_command_error(self, ctx, error):
         """Handle command errors"""
-        logger.error(f"Command error: {error}")
+        print(f"❌ Command error: {error}")
 
     async def on_application_command_error(self, interaction: discord.Interaction, error):
         """Handle application command errors"""
-        logger.error(f"Application command error: {error}")
+        print(f"❌ Slash command error: {error}")
         
         if not interaction.response.is_done():
             await interaction.response.send_message(
