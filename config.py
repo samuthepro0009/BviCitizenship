@@ -12,9 +12,9 @@ import logging
 
 # Channel IDs for bot operations (preferred method)
 CHANNEL_IDS = {
-    "citizenship_log": None,      # Channel for logging application submissions
-    "citizenship_status": None,   # Channel for posting approval/decline updates  
-    "mod_log": None               # Channel for moderation actions (bans, etc.)
+    "citizenship_log": 1397315480540151901,      # Channel for logging application submissions
+    "citizenship_status": 1397315480540151903,   # Channel for posting approval/decline updates  
+    "mod_log": 1397315480540151900               # Channel for moderation actions (bans, etc.)
 }
 
 # Channel names for bot operations (fallback method)
