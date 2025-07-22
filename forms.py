@@ -1,3 +1,4 @@
+
 """
 Discord forms and modals for the British Virgin Islands Bot
 """
@@ -32,8 +33,8 @@ class CitizenshipDashboard(discord.ui.View):
             )
             return
         
-        # Send the modal
-        modal = CitizenshipModal()
+        # Send the first page of the modal
+        modal = CitizenshipModalPage1()
         await interaction.response.send_modal(modal)
     
     @discord.ui.button(
@@ -120,13 +121,13 @@ class CitizenshipDashboard(discord.ui.View):
         for item in self.children:
             item.disabled = True
 
-class CitizenshipModal(discord.ui.Modal, title='BVI Citizenship Application'):
-    """Modal form for citizenship applications"""
+class CitizenshipModalPage1(discord.ui.Modal, title='BVI Citizenship Application - Page 1/2'):
+    """First page of the citizenship application form"""
     
     def __init__(self):
         super().__init__()
         
-        # Initialize form fields with settings (limited to 3 fields for Discord compatibility)
+        # Page 1: Basic Information (2 fields)
         self.roblox_username = discord.ui.TextInput(
             label=settings.forms.roblox_username_label,
             placeholder=settings.forms.roblox_username_placeholder,
@@ -141,7 +142,46 @@ class CitizenshipModal(discord.ui.Modal, title='BVI Citizenship Application'):
             required=True,
             max_length=settings.forms.reason_max_length
         )
+
+    async def on_submit(self, interaction: discord.Interaction):
+        """Handle page 1 submission and show page 2"""
+        try:
+            # Create the second page modal with data from page 1
+            modal_page2 = CitizenshipModalPage2(
+                roblox_username=self.roblox_username.value,
+                reason=self.reason.value
+            )
+            await interaction.response.send_modal(modal_page2)
+            
+        except Exception as e:
+            logger.error(f"Error processing citizenship application page 1: {e}")
+            await interaction.response.send_message(
+                "❌ An error occurred while processing your application. Please try again later.",
+                ephemeral=True
+            )
+    
+    async def on_error(self, interaction: discord.Interaction, error: Exception):
+        """Handle modal errors"""
+        logger.error(f"Modal page 1 error: {error}")
         
+        # Try to respond if we haven't already
+        if not interaction.response.is_done():
+            await interaction.response.send_message(
+                "❌ An error occurred while processing your application. Please try again later.",
+                ephemeral=True
+            )
+
+class CitizenshipModalPage2(discord.ui.Modal, title='BVI Citizenship Application - Page 2/2'):
+    """Second page of the citizenship application form"""
+    
+    def __init__(self, roblox_username: str, reason: str):
+        super().__init__()
+        
+        # Store data from page 1
+        self.page1_roblox_username = roblox_username
+        self.page1_reason = reason
+        
+        # Page 2: Additional Information (2 fields)
         self.criminal_record = discord.ui.TextInput(
             label=settings.forms.criminal_record_label,
             placeholder=settings.forms.criminal_record_placeholder,
@@ -149,20 +189,26 @@ class CitizenshipModal(discord.ui.Modal, title='BVI Citizenship Application'):
             max_length=settings.forms.criminal_record_max_length
         )
         
-        
+        self.additional_info = discord.ui.TextInput(
+            label=settings.forms.additional_info_label,
+            style=discord.TextStyle.paragraph,
+            placeholder=settings.forms.additional_info_placeholder,
+            required=False,
+            max_length=settings.forms.additional_info_max_length
+        )
 
     async def on_submit(self, interaction: discord.Interaction):
-        """Handle form submission"""
+        """Handle final form submission"""
         try:
-            # Create application object
+            # Create application object with data from both pages
             application = CitizenshipApplication(
                 user_id=interaction.user.id,
                 user_name=str(interaction.user),
-                roblox_username=self.roblox_username.value,
-                discord_username=str(interaction.user),  # Auto-filled from Discord user
-                reason=self.reason.value,
+                roblox_username=self.page1_roblox_username,
+                discord_username=str(interaction.user),
+                reason=self.page1_reason,
                 criminal_record=self.criminal_record.value,
-                additional_info=""  # Removed from form due to Discord component limits
+                additional_info=self.additional_info.value if self.additional_info.value else ""
             )
 
             # Get the bot instance to access pending applications
@@ -187,7 +233,7 @@ class CitizenshipModal(discord.ui.Modal, title='BVI Citizenship Application'):
             logger.info(f"New citizenship application submitted by {interaction.user} (ID: {interaction.user.id})")
 
         except Exception as e:
-            logger.error(f"Error processing citizenship application: {e}")
+            logger.error(f"Error processing citizenship application page 2: {e}")
             await interaction.response.send_message(
                 "❌ An error occurred while processing your application. Please try again later.",
                 ephemeral=True
@@ -195,7 +241,7 @@ class CitizenshipModal(discord.ui.Modal, title='BVI Citizenship Application'):
     
     async def on_error(self, interaction: discord.Interaction, error: Exception):
         """Handle modal errors"""
-        logger.error(f"Modal error: {error}")
+        logger.error(f"Modal page 2 error: {error}")
         
         # Try to respond if we haven't already
         if not interaction.response.is_done():
