@@ -13,6 +13,21 @@ class ChannelManager:
     """Manages Discord channel operations"""
     
     @staticmethod
+    def get_channel_by_id_or_name(guild: discord.Guild, channel_id: Optional[int], channel_name: str) -> Optional[discord.TextChannel]:
+        """Get a text channel by ID first, then by name as fallback"""
+        # Try by ID first (more reliable)
+        if channel_id:
+            channel = guild.get_channel(channel_id)
+            if channel and isinstance(channel, discord.TextChannel):
+                return channel
+        
+        # Fallback to name search
+        channel = discord.utils.get(guild.channels, name=channel_name)
+        if channel and isinstance(channel, discord.TextChannel):
+            return channel
+        return None
+    
+    @staticmethod
     def get_channel_by_name(guild: discord.Guild, channel_name: str) -> Optional[discord.TextChannel]:
         """Get a text channel by name from a guild"""
         channel = discord.utils.get(guild.channels, name=channel_name)
@@ -23,17 +38,29 @@ class ChannelManager:
     @staticmethod
     def get_citizenship_log_channel(guild: discord.Guild) -> Optional[discord.TextChannel]:
         """Get the citizenship log channel"""
-        return ChannelManager.get_channel_by_name(guild, settings.channels.citizenship_log)
+        return ChannelManager.get_channel_by_id_or_name(
+            guild, 
+            settings.channels.citizenship_log_id, 
+            settings.channels.citizenship_log
+        )
     
     @staticmethod
     def get_citizenship_status_channel(guild: discord.Guild) -> Optional[discord.TextChannel]:
         """Get the citizenship status channel"""
-        return ChannelManager.get_channel_by_name(guild, settings.channels.citizenship_status)
+        return ChannelManager.get_channel_by_id_or_name(
+            guild, 
+            settings.channels.citizenship_status_id, 
+            settings.channels.citizenship_status
+        )
     
     @staticmethod
     def get_mod_log_channel(guild: discord.Guild) -> Optional[discord.TextChannel]:
         """Get the moderation log channel"""
-        return ChannelManager.get_channel_by_name(guild, settings.channels.mod_log)
+        return ChannelManager.get_channel_by_id_or_name(
+            guild, 
+            settings.channels.mod_log_id, 
+            settings.channels.mod_log
+        )
 
 class EmbedBuilder:
     """Builds Discord embeds with consistent styling"""

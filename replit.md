@@ -121,14 +121,27 @@ The application is designed for cloud deployment with the following characterist
 
 ## Recent Changes
 
-### July 22, 2025 - Replit Migration & Configuration Enhancement
+### July 22, 2025 - Replit Migration & Interactive Dashboard Enhancement
 - **Replit Migration**: Successfully migrated from Replit Agent to standard Replit environment
-- **Enhanced Role Configuration**: Reorganized role management with cleaner, section-based configuration
-  - Added ADMIN_ROLES list for easy management of multiple admin roles
-  - Added CITIZENSHIP_MANAGER_ROLES list for citizenship-only permissions
-  - Implemented new RoleConfig class with helper methods
-  - Updated permission checking to use new role system
+- **Interactive Citizenship Dashboard**: Complete redesign of citizenship command interface
+  - Added beautiful BVI banner image integration (https://i.imgur.com/G1wrrwI.png)
+  - Created interactive button-based dashboard with 4 main functions:
+    - Apply for Citizenship (primary action button)
+    - Check Application Status (real-time status checking)
+    - Citizenship Information (benefits and requirements)
+    - Contact Support (help and troubleshooting)
+  - Implemented proper timeout handling and button management
+- **Enhanced Configuration System**: Reorganized both role and channel management
+  - **Role Configuration**: Clean sections for ADMIN_ROLES and CITIZENSHIP_MANAGER_ROLES
+  - **Channel Configuration**: Added support for both channel IDs and names
+    - CHANNEL_IDS for reliable channel targeting
+    - CHANNEL_NAMES as fallback method
+    - Updated ChannelManager with get_channel_by_id_or_name method
+- **Improved User Experience**: 
+  - Professional embedded interfaces with consistent branding
+  - Ephemeral responses for privacy
+  - Clear status messages and error handling
+  - Real-time application status tracking
 - **Environment Setup**: Configured Discord bot token and session secrets
 - **Workflow Configuration**: Set up proper Replit workflows for bot execution
-- **Code Quality**: Updated all command handlers to use new permission system
 - **Legacy Support**: Maintained backward compatibility with environment variables

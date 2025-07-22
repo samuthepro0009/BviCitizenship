@@ -21,21 +21,36 @@ class CommandHandlers:
         self.bot = bot
     
     async def handle_citizenship_application(self, interaction: discord.Interaction):
-        """Handle citizenship application command"""
-        # Check if user already has a pending application
-        if interaction.user.id in self.bot.pending_applications:
-            await interaction.response.send_message(
-                settings.messages.application_exists,
-                ephemeral=True
-            )
-            return
-
-        # Import CitizenshipModal dynamically to avoid circular imports
-        from forms import CitizenshipModal
+        """Handle citizenship application command - show interactive dashboard"""
+        # Import dashboard dynamically to avoid circular imports
+        from forms import CitizenshipDashboard
         
-        # Send the modal
-        modal = CitizenshipModal()
-        await interaction.response.send_modal(modal)
+        # Create the main dashboard embed with BVI banner
+        embed = discord.Embed(
+            title="🏴󠁧󠁢󠁥󠁮󠁧󠁿 British Virgin Islands Citizenship Services",
+            color=settings.embeds.application_submitted,
+            description="**Welcome to the British Virgin Islands Citizenship Portal**\n\n"
+                       "Use the buttons below to:\n"
+                       "• Apply for BVI citizenship\n"
+                       "• Check your application status\n"
+                       "• Learn about citizenship benefits\n"
+                       "• Contact our support team\n\n"
+                       "*Applications are reviewed by our citizenship management team*"
+        )
+        
+        # Set the BVI banner image
+        embed.set_image(url="https://i.imgur.com/G1wrrwI.png")
+        embed.set_footer(text="British Virgin Islands • Citizenship Portal", icon_url="https://i.imgur.com/G1wrrwI.png")
+        
+        # Create the interactive dashboard
+        dashboard = CitizenshipDashboard()
+        
+        # Send the embed with the interactive buttons
+        await interaction.response.send_message(
+            embed=embed, 
+            view=dashboard, 
+            ephemeral=True
+        )
     
     async def handle_citizenship_accept(self, interaction: discord.Interaction, user: discord.Member):
         """Handle citizenship acceptance command"""

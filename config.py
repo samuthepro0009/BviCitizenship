@@ -10,27 +10,32 @@ import logging
 # CHANNEL CONFIGURATION
 # =========================================
 
-# Channel names for bot operations
-CHANNELS = {
-    "citizenship_log": "citizenship-log",      # Channel for logging application submissions
-    "citizenship_status": "citizenship-status", # Channel for posting approval/decline updates  
-    "mod_log": "mod-log"                       # Channel for moderation actions (bans, etc.)
+# Channel IDs for bot operations (preferred method)
+CHANNEL_IDS = {
+    "citizenship_log": None,      # Channel for logging application submissions
+    "citizenship_status": None,   # Channel for posting approval/decline updates  
+    "mod_log": None               # Channel for moderation actions (bans, etc.)
+}
+
+# Channel names for bot operations (fallback method)
+CHANNEL_NAMES = {
+    "citizenship_log": "citizenship-log",      
+    "citizenship_status": "citizenship-status", 
+    "mod_log": "mod-log"                       
 }
 
 @dataclass
 class ChannelConfig:
     """Configuration for Discord channels"""
-    citizenship_log: str = CHANNELS["citizenship_log"]
-    citizenship_status: str = CHANNELS["citizenship_status"]
-    mod_log: str = CHANNELS["mod_log"]
+    # Channel IDs (preferred - more reliable than names)
+    citizenship_log_id: Optional[int] = CHANNEL_IDS["citizenship_log"]
+    citizenship_status_id: Optional[int] = CHANNEL_IDS["citizenship_status"]
+    mod_log_id: Optional[int] = CHANNEL_IDS["mod_log"]
     
-    @classmethod
-    def update_channels(cls, **kwargs):
-        """Update channel names dynamically"""
-        for key, value in kwargs.items():
-            if hasattr(cls, key):
-                setattr(cls, key, value)
-                CHANNELS[key] = value
+    # Channel names (fallback if IDs not provided)
+    citizenship_log: str = CHANNEL_NAMES["citizenship_log"]
+    citizenship_status: str = CHANNEL_NAMES["citizenship_status"]
+    mod_log: str = CHANNEL_NAMES["mod_log"]
 
 @dataclass
 class EmbedConfig:
