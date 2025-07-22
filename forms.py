@@ -157,6 +157,12 @@ class CitizenshipModal(discord.ui.Modal):
             required=False,
             max_length=500
         )
+        
+        # Add all components to the modal
+        self.add_item(self.roblox_username)
+        self.add_item(self.reason)
+        self.add_item(self.criminal_record)
+        self.add_item(self.additional_info)
 
     async def on_submit(self, interaction: discord.Interaction):
         """Handle form submission"""
