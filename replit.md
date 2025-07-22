@@ -22,8 +22,9 @@ The system follows a modular, event-driven architecture built around Discord.py'
 ### Discord Bot (`bot.py`)
 - **CitizenshipModal**: Interactive form for collecting application data
 - **Slash Commands**: Modern Discord command interface
-- **Application Processing**: Handles form submissions and admin reviews
+- **Application Processing**: Handles form submissions and dual-role admin reviews
 - **Role Management**: Automatic role assignment upon approval
+- **Dual Permission System**: Separate Admin and Citizenship Manager roles for granular access control
 
 ### Data Models (`models.py`)
 - **CitizenshipApplication**: Dataclass containing all application fields
@@ -63,6 +64,8 @@ The system follows a modular, event-driven architecture built around Discord.py'
 - **Discord Bot Token**: Required for Discord API authentication
 - **PORT**: Configurable port for Flask server (defaults to 5000)
 - **RENDER_EXTERNAL_URL**: External URL for self-ping functionality
+- **ADMIN_ROLE_ID**: Optional role ID for full admin permissions (ban users, manage citizenship)
+- **CITIZENSHIP_MANAGER_ROLE_ID**: Optional role ID for citizenship management only (cannot ban users)
 
 ## Deployment Strategy
 
@@ -85,7 +88,8 @@ The application is designed for cloud deployment with the following characterist
 
 ### Scalability Considerations
 - **Single Instance**: Current design for single bot instance
-- **Role-Based Access**: Built-in admin role checking for application management
+- **Role-Based Access**: Dual-tier permission system with Admin and Citizenship Manager roles
+- **Granular Permissions**: Citizenship managers can approve/decline but cannot ban users
 - **Rate Limiting**: Discord API rate limiting handled by discord.py
 
 ## Key Architectural Decisions
@@ -109,3 +113,18 @@ The application is designed for cloud deployment with the following characterist
 - **Problem**: Need both Discord bot and web server
 - **Solution**: Separate threads for each service
 - **Rationale**: Allows independent operation while sharing resources
+
+### Dual Permission System
+- **Problem**: Need flexible access control for different admin levels
+- **Solution**: Separate Admin and Citizenship Manager roles with different capabilities
+- **Rationale**: Allows delegation of citizenship management without full admin privileges
+
+## Recent Changes
+
+### July 22, 2025 - Permission System Enhancement
+- **Enhanced Permission Management**: Implemented dual-tier permission system
+- **Citizenship Manager Role**: New role for users who can approve/decline applications but cannot ban users
+- **Admin Role**: Retains full permissions including banning capabilities
+- **Improved Error Messages**: Added specific permission error messages for different command types
+- **Configuration Updates**: Added CITIZENSHIP_MANAGER_ROLE_ID environment variable
+- **Health Monitoring**: Updated status endpoint to include citizenship manager role configuration
