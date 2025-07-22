@@ -142,6 +142,10 @@ class CitizenshipModalPage1(discord.ui.Modal, title='BVI Citizenship Application
             required=True,
             max_length=settings.forms.reason_max_length
         )
+        
+        # Add components to the modal
+        self.add_item(self.roblox_username)
+        self.add_item(self.reason)
 
     async def on_submit(self, interaction: discord.Interaction):
         """Handle page 1 submission and show page 2"""
@@ -196,6 +200,10 @@ class CitizenshipModalPage2(discord.ui.Modal, title='BVI Citizenship Application
             required=False,
             max_length=settings.forms.additional_info_max_length
         )
+        
+        # Add components to the modal
+        self.add_item(self.criminal_record)
+        self.add_item(self.additional_info)
 
     async def on_submit(self, interaction: discord.Interaction):
         """Handle final form submission"""
