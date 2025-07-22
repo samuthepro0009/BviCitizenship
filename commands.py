@@ -23,9 +23,6 @@ class CommandHandlers:
     async def handle_citizenship_application(self, interaction: discord.Interaction):
         """Handle citizenship application command - show interactive dashboard"""
         try:
-            # Respond immediately to prevent timeout
-            await interaction.response.defer(ephemeral=True)
-
             # Import dashboard dynamically to avoid circular imports
             from forms import CitizenshipDashboard
 
@@ -45,36 +42,41 @@ class CommandHandlers:
             )
 
             # Set the professional banner image (separate from icon)
-            embed.set_image(url="https://i.imgur.com/IFnbn94.png")
+            embed.set_image(url="https://i.imgur.com/bvi-IFnbn94.png")
 
             # Set the footer with the new icon
             embed.set_footer(
                 text="Government of the British Virgin Islands | Citizenship Department", 
-                icon_url="https://i.imgur.com/CrYmk02.png"
+                icon_url="https://i.imgur.com/test-CrYmk02.png"
             )
 
             # Add thumbnail for additional branding
-            embed.set_thumbnail(url="https://i.imgur.com/CrYmk02.png")
+            embed.set_thumbnail(url="https://i.imgur.com/test-CrYmk02.png")
 
             # Create the interactive dashboard
             dashboard = CitizenshipDashboard()
 
-            # Send the embed with the interactive buttons using followup
-            await interaction.followup.send(
+            # Send the embed with the interactive buttons using response
+            await interaction.response.send_message(
                 embed=embed, 
                 view=dashboard, 
                 ephemeral=True
             )
         except Exception as e:
-            logger.error(f"Error in citizenship application command: {e}")
+            print(f"❌ Error in citizenship application command: {e}")
             try:
-                await interaction.followup.send(
-                    "❌ An error occurred. Please try again.",
-                    ephemeral=True
-                )
-            except:
-                # If followup also fails, log the error
-                logger.error(f"Failed to send error message: {e}")
+                if not interaction.response.is_done():
+                    await interaction.response.send_message(
+                        "❌ An error occurred. Please try again.",
+                        ephemeral=True
+                    )
+                else:
+                    await interaction.followup.send(
+                        "❌ An error occurred. Please try again.",
+                        ephemeral=True
+                    )
+            except Exception as follow_error:
+                print(f"❌ Failed to send error message: {follow_error}")
 
     async def handle_citizenship_accept(self, interaction: discord.Interaction, user: discord.Member):
         """Handle citizenship acceptance command"""

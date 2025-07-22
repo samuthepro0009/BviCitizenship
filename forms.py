@@ -45,11 +45,16 @@ class CitizenshipDashboard(discord.ui.View):
         bot = interaction.client
         if hasattr(bot, 'pending_applications') and interaction.user.id in bot.pending_applications:
             application = bot.pending_applications[interaction.user.id]
+            # Handle submitted_at attribute for backward compatibility
+            submitted_time = "Recently"
+            if hasattr(application, 'submitted_at') and application.submitted_at:
+                submitted_time = f"<t:{int(application.submitted_at.timestamp())}:R>"
+            
             embed = discord.Embed(
                 title="📋 Your Application Status",
                 color=settings.embeds.application_submitted,
                 description=f"**Status:** {application.status.value.title()}\n"
-                           f"**Submitted:** Recently\n"
+                           f"**Submitted:** {submitted_time}\n"
                            f"**Roblox Username:** {application.roblox_username}"
             )
             embed.set_footer(text="You will receive a DM when your application is reviewed.")
