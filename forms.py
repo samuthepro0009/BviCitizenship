@@ -33,8 +33,8 @@ class CitizenshipDashboard(discord.ui.View):
             )
             return
         
-        # Send the first page of the modal
-        modal = CitizenshipModalPage1()
+        # Send the citizenship modal
+        modal = CitizenshipModal()
         await interaction.response.send_modal(modal)
     
     @discord.ui.button(
@@ -121,100 +121,53 @@ class CitizenshipDashboard(discord.ui.View):
         for item in self.children:
             item.disabled = True
 
-class CitizenshipModalPage1(discord.ui.Modal, title='BVI Citizenship Application - Page 1/2'):
-    """First page of the citizenship application form"""
+class CitizenshipModal(discord.ui.Modal):
+    """Single-page citizenship application form"""
     
     def __init__(self):
-        super().__init__()
+        super().__init__(title='BVI Citizenship Application')
         
-        # Page 1: Basic Information (2 fields)
+        # Simplified form with 4 fields (Discord allows up to 5)
         self.roblox_username = discord.ui.TextInput(
-            label=settings.forms.roblox_username_label,
-            placeholder=settings.forms.roblox_username_placeholder,
+            label="Roblox Username",
+            placeholder="Enter your Roblox username...",
             required=True,
-            max_length=settings.forms.roblox_username_max_length
+            max_length=50
         )
         
         self.reason = discord.ui.TextInput(
-            label=settings.forms.reason_label,
+            label="Why do you want BVI citizenship?",
             style=discord.TextStyle.paragraph,
-            placeholder=settings.forms.reason_placeholder,
+            placeholder="Please explain your motivation...",
             required=True,
-            max_length=settings.forms.reason_max_length
+            max_length=1000
         )
         
-        # Add components to the modal
-        self.add_item(self.roblox_username)
-        self.add_item(self.reason)
-
-    async def on_submit(self, interaction: discord.Interaction):
-        """Handle page 1 submission and show page 2"""
-        try:
-            # Create the second page modal with data from page 1
-            modal_page2 = CitizenshipModalPage2(
-                roblox_username=self.roblox_username.value,
-                reason=self.reason.value
-            )
-            await interaction.response.send_modal(modal_page2)
-            
-        except Exception as e:
-            logger.error(f"Error processing citizenship application page 1: {e}")
-            await interaction.response.send_message(
-                "❌ An error occurred while processing your application. Please try again later.",
-                ephemeral=True
-            )
-    
-    async def on_error(self, interaction: discord.Interaction, error: Exception):
-        """Handle modal errors"""
-        logger.error(f"Modal page 1 error: {error}")
-        
-        # Try to respond if we haven't already
-        if not interaction.response.is_done():
-            await interaction.response.send_message(
-                "❌ An error occurred while processing your application. Please try again later.",
-                ephemeral=True
-            )
-
-class CitizenshipModalPage2(discord.ui.Modal, title='BVI Citizenship Application - Page 2/2'):
-    """Second page of the citizenship application form"""
-    
-    def __init__(self, roblox_username: str, reason: str):
-        super().__init__()
-        
-        # Store data from page 1
-        self.page1_roblox_username = roblox_username
-        self.page1_reason = reason
-        
-        # Page 2: Additional Information (2 fields)
         self.criminal_record = discord.ui.TextInput(
-            label=settings.forms.criminal_record_label,
-            placeholder=settings.forms.criminal_record_placeholder,
+            label="Criminal Record Disclosure",
+            placeholder="Yes/No and details if applicable...",
             required=True,
-            max_length=settings.forms.criminal_record_max_length
+            max_length=500
         )
         
         self.additional_info = discord.ui.TextInput(
-            label=settings.forms.additional_info_label,
+            label="Additional Information (Optional)",
             style=discord.TextStyle.paragraph,
-            placeholder=settings.forms.additional_info_placeholder,
+            placeholder="Any additional information...",
             required=False,
-            max_length=settings.forms.additional_info_max_length
+            max_length=500
         )
-        
-        # Add components to the modal
-        self.add_item(self.criminal_record)
-        self.add_item(self.additional_info)
 
     async def on_submit(self, interaction: discord.Interaction):
-        """Handle final form submission"""
+        """Handle form submission"""
         try:
-            # Create application object with data from both pages
+            # Create application object
             application = CitizenshipApplication(
                 user_id=interaction.user.id,
                 user_name=str(interaction.user),
-                roblox_username=self.page1_roblox_username,
+                roblox_username=self.roblox_username.value,
                 discord_username=str(interaction.user),
-                reason=self.page1_reason,
+                reason=self.reason.value,
                 criminal_record=self.criminal_record.value,
                 additional_info=self.additional_info.value if self.additional_info.value else ""
             )
@@ -241,15 +194,16 @@ class CitizenshipModalPage2(discord.ui.Modal, title='BVI Citizenship Application
             logger.info(f"New citizenship application submitted by {interaction.user} (ID: {interaction.user.id})")
 
         except Exception as e:
-            logger.error(f"Error processing citizenship application page 2: {e}")
-            await interaction.response.send_message(
-                "❌ An error occurred while processing your application. Please try again later.",
-                ephemeral=True
-            )
+            logger.error(f"Error processing citizenship application: {e}")
+            if not interaction.response.is_done():
+                await interaction.response.send_message(
+                    "❌ An error occurred while processing your application. Please try again later.",
+                    ephemeral=True
+                )
     
     async def on_error(self, interaction: discord.Interaction, error: Exception):
         """Handle modal errors"""
-        logger.error(f"Modal page 2 error: {error}")
+        logger.error(f"Modal error: {error}")
         
         # Try to respond if we haven't already
         if not interaction.response.is_done():
