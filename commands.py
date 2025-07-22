@@ -79,8 +79,15 @@ class CommandHandlers:
     async def handle_citizenship_accept(self, interaction: discord.Interaction, user: discord.Member):
         """Handle citizenship acceptance command"""
         # Check citizenship management permissions (admin OR citizenship manager)
-        user_role_ids = [role.id for role in interaction.user.roles]
-        if not settings.has_citizenship_permission(user_role_ids):
+        if hasattr(interaction.user, 'roles') and interaction.user.roles:
+            user_role_ids = [role.id for role in interaction.user.roles]
+            if not settings.has_citizenship_permission(user_role_ids):
+                await interaction.response.send_message(
+                    settings.messages.no_citizenship_permission,
+                    ephemeral=True
+                )
+                return
+        else:
             await interaction.response.send_message(
                 settings.messages.no_citizenship_permission,
                 ephemeral=True
@@ -107,10 +114,11 @@ class CommandHandlers:
         ApplicationManager.remove_application(self.bot.pending_applications, user.id)
 
         # Post to citizenship-status channel
-        status_channel = ChannelManager.get_citizenship_status_channel(interaction.guild)
-        if status_channel:
-            embed = EmbedBuilder.create_approval_embed(user, interaction.user, application)
-            await status_channel.send(embed=embed)
+        if interaction.guild:
+            status_channel = ChannelManager.get_citizenship_status_channel(interaction.guild)
+            if status_channel:
+                embed = EmbedBuilder.create_approval_embed(user, interaction.user, application)
+                await status_channel.send(embed=embed)
 
         # Send DM to applicant
         try:
@@ -139,7 +147,7 @@ class CommandHandlers:
         except Exception as e:
             logger.error(f"Error sending DM to {user}: {e}")
 
-        # Use followup if response already processed, otherwise use response
+        # Use followup since we're not deferring this command
         try:
             await interaction.response.send_message(
                 settings.messages.approval_success.format(user=user.mention),

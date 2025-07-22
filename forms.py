@@ -23,7 +23,7 @@ class CitizenshipDashboard(discord.ui.View):
         """Handle citizenship application button"""
         # Check if user already has a pending application
         bot = interaction.client
-        if hasattr(bot, 'pending_applications') and interaction.user.id in bot.pending_applications:
+        if hasattr(bot, 'pending_applications') and hasattr(bot, 'pending_applications') and interaction.user.id in bot.pending_applications:
             await interaction.response.send_message(
                 settings.messages.application_exists,
                 ephemeral=True
@@ -132,7 +132,8 @@ class CitizenshipDashboard(discord.ui.View):
         """Handle view timeout"""
         # Disable all buttons when the view times out
         for item in self.children:
-            item.disabled = True
+            if hasattr(item, 'disabled'):
+                item.disabled = True
 
 class CitizenshipModal(discord.ui.Modal):
     """Single-page citizenship application form"""
@@ -196,10 +197,12 @@ class CitizenshipModal(discord.ui.Modal):
 
             # Get the bot instance to access pending applications
             bot = interaction.client
-            bot.pending_applications[interaction.user.id] = application
+            if hasattr(bot, 'pending_applications'):
+                bot.pending_applications[interaction.user.id] = application
 
             # Log to citizenship-log channel
-            log_channel = ChannelManager.get_citizenship_log_channel(interaction.guild)
+            if interaction.guild:
+                log_channel = ChannelManager.get_citizenship_log_channel(interaction.guild)
 
             if log_channel:
                 embed = EmbedBuilder.create_application_embed(application, interaction.user)
