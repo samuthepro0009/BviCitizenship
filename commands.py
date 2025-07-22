@@ -45,16 +45,16 @@ class CommandHandlers:
             )
 
             # Set the professional banner image (separate from icon)
-            embed.set_image(url="https://imgur.com/gallery/bvi-IFnbn94.png")
+            embed.set_image(url="https://imgur.com/gallery/bvi-IFnbn94")
 
             # Set the footer with the new icon
             embed.set_footer(
                 text="Government of the British Virgin Islands | Citizenship Department", 
-                icon_url="https://imgur.com/gallery/test-CrYmk02.png"
+                icon_url="https://imgur.com/gallery/test-CrYmk02"
             )
 
             # Add thumbnail for additional branding
-            embed.set_thumbnail(url="https://imgur.com/gallery/bvi-IFnbn94.png")
+            embed.set_thumbnail(url="https://imgur.com/gallery/test-CrYmk02")
 
             # Create the interactive dashboard
             dashboard = CitizenshipDashboard()

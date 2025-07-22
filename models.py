@@ -1,6 +1,7 @@
 from enum import Enum
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Optional
+from datetime import datetime
 import discord
 
 class ApplicationStatus(Enum):
@@ -20,6 +21,7 @@ class CitizenshipApplication:
     status: ApplicationStatus = ApplicationStatus.PENDING
     reviewed_by: Optional[str] = None
     rejection_reason: Optional[str] = None
+    submitted_at: datetime = field(default_factory=datetime.now)
     
     def __post_init__(self):
         # Ensure strings are properly trimmed
