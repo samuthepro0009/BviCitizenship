@@ -126,19 +126,12 @@ class CitizenshipModal(discord.ui.Modal, title='BVI Citizenship Application'):
     def __init__(self):
         super().__init__()
         
-        # Initialize form fields with settings
+        # Initialize form fields with settings (limited to 3 fields for Discord compatibility)
         self.roblox_username = discord.ui.TextInput(
             label=settings.forms.roblox_username_label,
             placeholder=settings.forms.roblox_username_placeholder,
             required=True,
             max_length=settings.forms.roblox_username_max_length
-        )
-        
-        self.discord_username = discord.ui.TextInput(
-            label=settings.forms.discord_username_label,
-            placeholder=settings.forms.discord_username_placeholder,
-            required=True,
-            max_length=settings.forms.discord_username_max_length
         )
         
         self.reason = discord.ui.TextInput(
@@ -166,7 +159,7 @@ class CitizenshipModal(discord.ui.Modal, title='BVI Citizenship Application'):
                 user_id=interaction.user.id,
                 user_name=str(interaction.user),
                 roblox_username=self.roblox_username.value,
-                discord_username=self.discord_username.value,
+                discord_username=str(interaction.user),  # Auto-filled from Discord user
                 reason=self.reason.value,
                 criminal_record=self.criminal_record.value,
                 additional_info=""  # Removed from form due to Discord component limits
