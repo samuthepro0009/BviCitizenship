@@ -129,7 +129,7 @@ class CommandConfig:
 ADMIN_ROLES = [
     # Add your admin role IDs here, one per line
     # Example:
-    # 112121,
+    1397315477163868309,
     # 123123213,
 ]
 
@@ -137,7 +137,7 @@ ADMIN_ROLES = [
 CITIZENSHIP_MANAGER_ROLES = [
     # Add your citizenship manager role IDs here, one per line
     # Example:
-    # 123123213213213,
+    1397315477163868309,
     # 8425523532,
 ]
 
