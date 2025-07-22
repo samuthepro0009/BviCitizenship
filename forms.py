@@ -49,7 +49,7 @@ class CitizenshipDashboard(discord.ui.View):
                 title="📋 Your Application Status",
                 color=settings.embeds.application_submitted,
                 description=f"**Status:** {application.status.value.title()}\n"
-                           f"**Submitted:** <t:{int(application.submitted_at.timestamp())}:R>\n"
+                           f"**Submitted:** Recently\n"
                            f"**Roblox Username:** {application.roblox_username}"
             )
             embed.set_footer(text="You will receive a DM when your application is reviewed.")
