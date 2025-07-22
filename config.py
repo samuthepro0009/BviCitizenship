@@ -156,10 +156,14 @@ class RoleConfig:
     
     def is_admin(self, user_roles: List[int]) -> bool:
         """Check if user has admin permissions"""
+        if self.admin_roles is None:
+            return False
         return any(role_id in self.admin_roles for role_id in user_roles)
     
     def is_citizenship_manager(self, user_roles: List[int]) -> bool:
         """Check if user has citizenship management permissions"""
+        if self.citizenship_manager_roles is None:
+            return False
         return any(role_id in self.citizenship_manager_roles for role_id in user_roles)
     
     def has_citizenship_permissions(self, user_roles: List[int]) -> bool:
@@ -228,7 +232,7 @@ class Settings:
     def get_admin_roles(self) -> List[int]:
         """Get list of admin role IDs"""
         # Combine configured roles with legacy environment variable
-        roles = self.roles.admin_roles.copy()
+        roles = self.roles.admin_roles.copy() if self.roles.admin_roles is not None else []
         legacy_role = self.get_admin_role_id()
         if legacy_role != 0 and legacy_role not in roles:
             roles.append(legacy_role)
@@ -237,7 +241,7 @@ class Settings:
     def get_citizenship_manager_roles(self) -> List[int]:
         """Get list of citizenship manager role IDs"""
         # Combine configured roles with legacy environment variable
-        roles = self.roles.citizenship_manager_roles.copy()
+        roles = self.roles.citizenship_manager_roles.copy() if self.roles.citizenship_manager_roles is not None else []
         legacy_role = self.get_citizenship_manager_role_id()
         if legacy_role != 0 and legacy_role not in roles:
             roles.append(legacy_role)
