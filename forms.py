@@ -74,20 +74,28 @@ class CitizenshipDashboard(discord.ui.View):
     async def citizenship_info(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Handle information button"""
         embed = discord.Embed(
-            title="🏴󠁧󠁢󠁥󠁮󠁧󠁿 British Virgin Islands Citizenship",
-            color=settings.embeds.application_submitted,
-            description="**Benefits of BVI Citizenship:**\n"
+            title="British Virgin Islands Citizenship Information",
+            color=0x1e3a8a,  # Professional navy blue
+            description="**━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**\n\n"
+                       "**🎯 Benefits of BVI Citizenship:**\n"
                        "• Access to exclusive BVI community events\n"
                        "• Special citizen role and privileges\n"
                        "• Priority support and assistance\n"
-                       "• Participation in BVI governance discussions\n\n"
-                       "**Application Requirements:**\n"
+                       "• Participation in BVI governance discussions\n"
+                       "• Access to citizen-only channels and content\n\n"
+                       "**📋 Application Requirements:**\n"
                        "• Valid Roblox username\n"
                        "• Clear criminal record disclosure\n"
                        "• Genuine interest in the BVI community\n"
-                       "• Respectful behavior and good standing"
+                       "• Respectful behavior and good standing\n"
+                       "• Completion of all required forms\n\n"
+                       "**━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**"
         )
-        embed.set_footer(text="Applications are reviewed by our citizenship team")
+        embed.set_footer(
+            text="Government of the British Virgin Islands | Citizenship Department", 
+            icon_url="https://i.imgur.com/CrYmk02.png"
+        )
+        embed.set_thumbnail(url="https://i.imgur.com/CrYmk02.png")
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
     @discord.ui.button(
@@ -99,19 +107,27 @@ class CitizenshipDashboard(discord.ui.View):
     async def contact_support(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Handle support contact button"""
         embed = discord.Embed(
-            title="📞 Contact Support",
-            color=settings.embeds.application_submitted,
-            description="Need help with your citizenship application?\n\n"
-                       "**Contact Methods:**\n"
-                       "• Message a staff member directly\n"
-                       "• Open a support ticket\n"
-                       "• Ask in the general support channel\n\n"
-                       "**Common Issues:**\n"
-                       "• Application not submitted - Try again\n"
-                       "• Status questions - Check your DMs\n"
-                       "• Technical problems - Contact an admin"
+            title="📞 Citizenship Support Services",
+            color=0x1e3a8a,  # Professional navy blue
+            description="**Need assistance with your citizenship application?**\n\n"
+                       "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+                       "**📧 Contact Methods:**\n"
+                       "• Message a certified staff member directly\n"
+                       "• Open an official support ticket\n"
+                       "• Ask in the designated support channel\n"
+                       "• Email our citizenship department\n\n"
+                       "**🔧 Common Issues & Solutions:**\n"
+                       "• Application not submitted → Try submitting again\n"
+                       "• Status questions → Check your direct messages\n"
+                       "• Technical problems → Contact a system administrator\n"
+                       "• Form errors → Ensure all fields are completed\n\n"
+                       "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         )
-        embed.set_footer(text="Our support team is here to help!")
+        embed.set_footer(
+            text="Government of the British Virgin Islands | Citizenship Support", 
+            icon_url="https://i.imgur.com/CrYmk02.png"
+        )
+        embed.set_thumbnail(url="https://i.imgur.com/CrYmk02.png")
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
     async def on_timeout(self):

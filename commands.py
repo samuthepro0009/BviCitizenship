@@ -23,42 +23,58 @@ class CommandHandlers:
     async def handle_citizenship_application(self, interaction: discord.Interaction):
         """Handle citizenship application command - show interactive dashboard"""
         try:
+            # Respond immediately to prevent timeout
+            await interaction.response.defer(ephemeral=True)
+            
             # Import dashboard dynamically to avoid circular imports
             from forms import CitizenshipDashboard
             
-            # Create the main dashboard embed with BVI banner
+            # Create the main dashboard embed with professional styling
             embed = discord.Embed(
-                title="🏴󠁧󠁢󠁥󠁮󠁧󠁿 British Virgin Islands Citizenship Services",
-                color=settings.embeds.application_submitted,
-                description="**Welcome to the British Virgin Islands Citizenship Portal**\n\n"
-                           "Use the buttons below to:\n"
-                           "• Apply for BVI citizenship\n"
-                           "• Check your application status\n"
-                           "• Learn about citizenship benefits\n"
-                           "• Contact our support team\n\n"
-                           "*Applications are reviewed by our citizenship management team*"
+                title="British Virgin Islands Citizenship Services",
+                color=0x1e3a8a,  # Professional navy blue
+                description="**Welcome to the Official BVI Citizenship Portal**\n\n"
+                           "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+                           "**Available Services:**\n"
+                           "🗳️ Apply for BVI citizenship\n"
+                           "📊 Check your application status\n"
+                           "📋 Learn about citizenship benefits\n"
+                           "🎧 Contact our support team\n\n"
+                           "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+                           "*All applications are reviewed by our certified citizenship management team*"
             )
             
-            # Set the BVI banner image
+            # Set the professional banner image (separate from icon)
             embed.set_image(url="https://i.imgur.com/G1wrrwI.png")
-            embed.set_footer(text="British Virgin Islands • Citizenship Portal", icon_url="https://i.imgur.com/G1wrrwI.png")
+            
+            # Set the footer with the new icon
+            embed.set_footer(
+                text="Government of the British Virgin Islands | Citizenship Department", 
+                icon_url="https://i.imgur.com/CrYmk02.png"
+            )
+            
+            # Add thumbnail for additional branding
+            embed.set_thumbnail(url="https://i.imgur.com/CrYmk02.png")
             
             # Create the interactive dashboard
             dashboard = CitizenshipDashboard()
             
-            # Send the embed with the interactive buttons
-            await interaction.response.send_message(
+            # Send the embed with the interactive buttons using followup
+            await interaction.followup.send(
                 embed=embed, 
                 view=dashboard, 
                 ephemeral=True
             )
         except Exception as e:
             logger.error(f"Error in citizenship application command: {e}")
-            if not interaction.response.is_done():
-                await interaction.response.send_message(
+            try:
+                await interaction.followup.send(
                     "❌ An error occurred. Please try again.",
                     ephemeral=True
                 )
+            except:
+                # If followup also fails, log the error
+                logger.error(f"Failed to send error message: {e}")
     
     async def handle_citizenship_accept(self, interaction: discord.Interaction, user: discord.Member):
         """Handle citizenship acceptance command"""
@@ -99,12 +115,22 @@ class CommandHandlers:
         # Send DM to applicant
         try:
             dm_embed = discord.Embed(
-                title="🎉 Citizenship Application Approved!",
-                color=settings.embeds.application_approved,
-                description="Congratulations! Your application for British Virgin Islands citizenship has been **approved**.\n\n"
-                           "You are now officially a citizen of the British Virgin Islands! 🏴󠁧󠁢󠁥󠁮󠁧󠁿"
+                title="✅ Citizenship Application Approved",
+                color=0x16a085,  # Professional green
+                description="**Congratulations!**\n\n"
+                           "Your application for British Virgin Islands citizenship has been **officially approved**.\n\n"
+                           "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+                           "You are now a **certified citizen** of the British Virgin Islands!\n\n"
+                           "**Next Steps:**\n"
+                           "• Your citizenship role will be assigned shortly\n"
+                           "• You now have access to citizen-only channels\n"
+                           "• Welcome to the BVI community!"
             )
-            dm_embed.set_footer(text="British Virgin Islands • Citizenship Services")
+            dm_embed.set_footer(
+                text="Government of the British Virgin Islands | Citizenship Department", 
+                icon_url="https://i.imgur.com/CrYmk02.png"
+            )
+            dm_embed.set_thumbnail(url="https://i.imgur.com/CrYmk02.png")
             
             await user.send(embed=dm_embed)
             logger.info(f"Successfully sent approval DM to {user}")
@@ -113,10 +139,17 @@ class CommandHandlers:
         except Exception as e:
             logger.error(f"Error sending DM to {user}: {e}")
 
-        await interaction.response.send_message(
-            settings.messages.approval_success.format(user=user.mention),
-            ephemeral=True
-        )
+        # Use followup if response already processed, otherwise use response
+        try:
+            await interaction.response.send_message(
+                settings.messages.approval_success.format(user=user.mention),
+                ephemeral=True
+            )
+        except discord.errors.InteractionResponded:
+            await interaction.followup.send(
+                settings.messages.approval_success.format(user=user.mention),
+                ephemeral=True
+            )
     
     async def handle_citizenship_decline(self, interaction: discord.Interaction, 
                                        user: discord.Member, reason: str = "No reason provided"):
@@ -160,12 +193,22 @@ class CommandHandlers:
         try:
             dm_embed = discord.Embed(
                 title="❌ Citizenship Application Declined",
-                color=settings.embeds.application_declined,
-                description=f"Unfortunately, your application for British Virgin Islands citizenship has been **declined**.\n\n"
-                           f"**Reason:** {reason}\n\n"
-                           f"You may reapply in the future if circumstances change."
+                color=0xe74c3c,  # Professional red
+                description=f"**Application Status Update**\n\n"
+                           f"Unfortunately, your application for British Virgin Islands citizenship has been **declined**.\n\n"
+                           f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+                           f"**Reason for Decline:**\n{reason}\n\n"
+                           f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+                           f"**Next Steps:**\n"
+                           f"• You may reapply in the future if circumstances change\n"
+                           f"• Contact our support team if you have questions\n"
+                           f"• Review citizenship requirements before reapplying"
             )
-            dm_embed.set_footer(text="British Virgin Islands • Citizenship Services")
+            dm_embed.set_footer(
+                text="Government of the British Virgin Islands | Citizenship Department", 
+                icon_url="https://i.imgur.com/CrYmk02.png"
+            )
+            dm_embed.set_thumbnail(url="https://i.imgur.com/CrYmk02.png")
             
             await user.send(embed=dm_embed)
             logger.info(f"Successfully sent decline DM to {user}")
@@ -174,10 +217,17 @@ class CommandHandlers:
         except Exception as e:
             logger.error(f"Error sending DM to {user}: {e}")
 
-        await interaction.response.send_message(
-            settings.messages.decline_success.format(user=user.mention),
-            ephemeral=True
-        )
+        # Use followup if response already processed, otherwise use response
+        try:
+            await interaction.response.send_message(
+                settings.messages.decline_success.format(user=user.mention),
+                ephemeral=True
+            )
+        except discord.errors.InteractionResponded:
+            await interaction.followup.send(
+                settings.messages.decline_success.format(user=user.mention),
+                ephemeral=True
+            )
     
     async def handle_ban_command(self, interaction: discord.Interaction, user: discord.Member, 
                                place_id: str, reason: str = "No reason provided"):
