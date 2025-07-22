@@ -6,12 +6,31 @@ from dataclasses import dataclass
 from typing import Dict, List, Optional
 import logging
 
+# =========================================
+# CHANNEL CONFIGURATION
+# =========================================
+
+# Channel names for bot operations
+CHANNELS = {
+    "citizenship_log": "citizenship-log",      # Channel for logging application submissions
+    "citizenship_status": "citizenship-status", # Channel for posting approval/decline updates  
+    "mod_log": "mod-log"                       # Channel for moderation actions (bans, etc.)
+}
+
 @dataclass
 class ChannelConfig:
     """Configuration for Discord channels"""
-    citizenship_log: str = "citizenship-log"
-    citizenship_status: str = "citizenship-status" 
-    mod_log: str = "mod-log"
+    citizenship_log: str = CHANNELS["citizenship_log"]
+    citizenship_status: str = CHANNELS["citizenship_status"]
+    mod_log: str = CHANNELS["mod_log"]
+    
+    @classmethod
+    def update_channels(cls, **kwargs):
+        """Update channel names dynamically"""
+        for key, value in kwargs.items():
+            if hasattr(cls, key):
+                setattr(cls, key, value)
+                CHANNELS[key] = value
 
 @dataclass
 class EmbedConfig:
@@ -97,7 +116,7 @@ class CommandConfig:
     ban_place_id_param: str = "The Roblox place ID to ban from"
     ban_reason_param: str = "Reason for the ban"
 
-# =========================================
+# =========================================  
 # ROLE CONFIGURATION
 # =========================================
 
@@ -109,7 +128,7 @@ ADMIN_ROLES = [
     # 123123213,
 ]
 
-# Citizenship manager roles (citizenship management only, cannot ban users)
+# Citizenship manager roles (citizenship management only, cannot ban users)  
 CITIZENSHIP_MANAGER_ROLES = [
     # Add your citizenship manager role IDs here, one per line
     # Example:
