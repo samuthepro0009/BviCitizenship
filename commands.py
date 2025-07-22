@@ -16,19 +16,19 @@ logger = logging.getLogger(__name__)
 
 class CommandHandlers:
     """Centralized command handlers for the bot"""
-    
+
     def __init__(self, bot):
         self.bot = bot
-    
+
     async def handle_citizenship_application(self, interaction: discord.Interaction):
         """Handle citizenship application command - show interactive dashboard"""
         try:
             # Respond immediately to prevent timeout
             await interaction.response.defer(ephemeral=True)
-            
+
             # Import dashboard dynamically to avoid circular imports
             from forms import CitizenshipDashboard
-            
+
             # Create the main dashboard embed with professional styling
             embed = discord.Embed(
                 title="British Virgin Islands Citizenship Services",
@@ -43,22 +43,22 @@ class CommandHandlers:
                            "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
                            "*All applications are reviewed by our certified citizenship management team*"
             )
-            
+
             # Set the professional banner image (separate from icon)
-            embed.set_image(url="https://i.imgur.com/G1wrrwI.png")
-            
+            embed.set_image(url="https://imgur.com/gallery/bvi-IFnbn94")
+
             # Set the footer with the new icon
             embed.set_footer(
                 text="Government of the British Virgin Islands | Citizenship Department", 
-                icon_url="https://i.imgur.com/CrYmk02.png"
+                icon_url="https://imgur.com/gallery/test-CrYmk02"
             )
-            
+
             # Add thumbnail for additional branding
-            embed.set_thumbnail(url="https://i.imgur.com/CrYmk02.png")
-            
+            embed.set_thumbnail(url="https://imgur.com/gallery/test-CrYmk02")
+
             # Create the interactive dashboard
             dashboard = CitizenshipDashboard()
-            
+
             # Send the embed with the interactive buttons using followup
             await interaction.followup.send(
                 embed=embed, 
@@ -75,7 +75,7 @@ class CommandHandlers:
             except:
                 # If followup also fails, log the error
                 logger.error(f"Failed to send error message: {e}")
-    
+
     async def handle_citizenship_accept(self, interaction: discord.Interaction, user: discord.Member):
         """Handle citizenship acceptance command"""
         # Check citizenship management permissions (admin OR citizenship manager)
@@ -91,7 +91,7 @@ class CommandHandlers:
         application = ApplicationManager.find_application_by_user_id(
             self.bot.pending_applications, user.id
         )
-        
+
         if not application:
             await interaction.response.send_message(
                 settings.messages.no_application_found.format(user=user.mention),
@@ -128,10 +128,10 @@ class CommandHandlers:
             )
             dm_embed.set_footer(
                 text="Government of the British Virgin Islands | Citizenship Department", 
-                icon_url="https://i.imgur.com/CrYmk02.png"
+                icon_url="https://imgur.com/gallery/test-CrYmk02"
             )
-            dm_embed.set_thumbnail(url="https://i.imgur.com/CrYmk02.png")
-            
+            dm_embed.set_thumbnail(url="https://imgur.com/gallery/test-CrYmk02")
+
             await user.send(embed=dm_embed)
             logger.info(f"Successfully sent approval DM to {user}")
         except discord.Forbidden:
@@ -150,7 +150,7 @@ class CommandHandlers:
                 settings.messages.approval_success.format(user=user.mention),
                 ephemeral=True
             )
-    
+
     async def handle_citizenship_decline(self, interaction: discord.Interaction, 
                                        user: discord.Member, reason: str = "No reason provided"):
         """Handle citizenship decline command"""
@@ -167,7 +167,7 @@ class CommandHandlers:
         application = ApplicationManager.find_application_by_user_id(
             self.bot.pending_applications, user.id
         )
-        
+
         if not application:
             await interaction.response.send_message(
                 settings.messages.no_application_found.format(user=user.mention),
@@ -206,10 +206,10 @@ class CommandHandlers:
             )
             dm_embed.set_footer(
                 text="Government of the British Virgin Islands | Citizenship Department", 
-                icon_url="https://i.imgur.com/CrYmk02.png"
+                icon_url="https://imgur.com/gallery/test-CrYmk02"
             )
-            dm_embed.set_thumbnail(url="https://i.imgur.com/CrYmk02.png")
-            
+            dm_embed.set_thumbnail(url="https://imgur.com/gallery/test-CrYmk02")
+
             await user.send(embed=dm_embed)
             logger.info(f"Successfully sent decline DM to {user}")
         except discord.Forbidden:
@@ -228,7 +228,7 @@ class CommandHandlers:
                 settings.messages.decline_success.format(user=user.mention),
                 ephemeral=True
             )
-    
+
     async def handle_ban_command(self, interaction: discord.Interaction, user: discord.Member, 
                                place_id: str, reason: str = "No reason provided"):
         """Handle Roblox ban command"""

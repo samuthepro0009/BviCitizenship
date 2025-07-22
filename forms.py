@@ -1,3 +1,4 @@
+"""Update form embed URLs and address potential interaction errors."""
 """
 Discord forms and modals for the British Virgin Islands Bot
 """
@@ -93,9 +94,9 @@ class CitizenshipDashboard(discord.ui.View):
         )
         embed.set_footer(
             text="Government of the British Virgin Islands | Citizenship Department", 
-            icon_url="https://i.imgur.com/CrYmk02.png"
+            icon_url="https://imgur.com/gallery/test-CrYmk02"
         )
-        embed.set_thumbnail(url="https://i.imgur.com/CrYmk02.png")
+        embed.set_thumbnail(url="https://imgur.com/gallery/test-CrYmk02")
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
     @discord.ui.button(
@@ -124,10 +125,10 @@ class CitizenshipDashboard(discord.ui.View):
                        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         )
         embed.set_footer(
-            text="Government of the British Virgin Islands | Citizenship Support", 
-            icon_url="https://i.imgur.com/CrYmk02.png"
+            text="Government of the British Virgin Islands | Citizenship Department", 
+            icon_url="https://imgur.com/gallery/test-CrYmk02"
         )
-        embed.set_thumbnail(url="https://i.imgur.com/CrYmk02.png")
+        embed.set_thumbnail(url="https://imgur.com/gallery/test-CrYmk02")
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
     async def on_timeout(self):
@@ -240,3 +241,4 @@ class CitizenshipModal(discord.ui.Modal):
                 "❌ An error occurred while processing your application. Please try again later.",
                 ephemeral=True
             )
+`
