@@ -1,4 +1,3 @@
-
 """
 Discord forms and modals for the British Virgin Islands Bot
 """
@@ -12,10 +11,10 @@ logger = logging.getLogger(__name__)
 
 class CitizenshipDashboard(discord.ui.View):
     """Interactive dashboard for citizenship services"""
-    
+
     def __init__(self):
         super().__init__(timeout=300)  # 5 minute timeout
-    
+
     @discord.ui.button(
         label='Apply for Citizenship',
         emoji='📋',
@@ -32,11 +31,11 @@ class CitizenshipDashboard(discord.ui.View):
                 ephemeral=True
             )
             return
-        
+
         # Send the citizenship modal
         modal = CitizenshipModal()
         await interaction.response.send_modal(modal)
-    
+
     @discord.ui.button(
         label='Check Application Status',
         emoji='🔍',
@@ -65,7 +64,7 @@ class CitizenshipDashboard(discord.ui.View):
                            "Click 'Apply for Citizenship' to submit your application!"
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
-    
+
     @discord.ui.button(
         label='Citizenship Information',
         emoji='ℹ️',
@@ -90,7 +89,7 @@ class CitizenshipDashboard(discord.ui.View):
         )
         embed.set_footer(text="Applications are reviewed by our citizenship team")
         await interaction.response.send_message(embed=embed, ephemeral=True)
-    
+
     @discord.ui.button(
         label='Contact Support',
         emoji='📞',
@@ -123,10 +122,10 @@ class CitizenshipDashboard(discord.ui.View):
 
 class CitizenshipModal(discord.ui.Modal):
     """Single-page citizenship application form"""
-    
+
     def __init__(self):
         super().__init__(title='BVI Citizenship Application')
-        
+
         # Simplified form with 4 fields (Discord allows up to 5)
         self.roblox_username = discord.ui.TextInput(
             label="Roblox Username",
@@ -134,7 +133,7 @@ class CitizenshipModal(discord.ui.Modal):
             required=True,
             max_length=50
         )
-        
+
         self.reason = discord.ui.TextInput(
             label="Why do you want BVI citizenship?",
             style=discord.TextStyle.paragraph,
@@ -142,14 +141,14 @@ class CitizenshipModal(discord.ui.Modal):
             required=True,
             max_length=1000
         )
-        
+
         self.criminal_record = discord.ui.TextInput(
             label="Criminal Record Disclosure",
             placeholder="Yes/No and details if applicable...",
             required=True,
             max_length=500
         )
-        
+
         self.additional_info = discord.ui.TextInput(
             label="Additional Information (Optional)",
             style=discord.TextStyle.paragraph,
@@ -157,7 +156,7 @@ class CitizenshipModal(discord.ui.Modal):
             required=False,
             max_length=500
         )
-        
+
         # Add all components to the modal
         self.add_item(self.roblox_username)
         self.add_item(self.reason)
@@ -167,6 +166,9 @@ class CitizenshipModal(discord.ui.Modal):
     async def on_submit(self, interaction: discord.Interaction):
         """Handle form submission"""
         try:
+            # Respond immediately to prevent timeout
+            await interaction.response.defer(ephemeral=True)
+
             # Create application object
             application = CitizenshipApplication(
                 user_id=interaction.user.id,
@@ -184,33 +186,38 @@ class CitizenshipModal(discord.ui.Modal):
 
             # Log to citizenship-log channel
             log_channel = ChannelManager.get_citizenship_log_channel(interaction.guild)
-            
+
             if log_channel:
                 embed = EmbedBuilder.create_application_embed(application, interaction.user)
                 await log_channel.send(embed=embed)
             else:
-                logger.warning(f"Channel '{settings.channels.citizenship_log}' not found")
+                logger.warning("Could not find citizenship-log channel")
 
-            # Send success response
-            await interaction.response.send_message(
+            logger.info(f"New citizenship application submitted by {interaction.user} (ID: {interaction.user.id})")
+
+            # Send success message using followup
+            await interaction.followup.send(
                 settings.messages.application_success,
                 ephemeral=True
             )
-            
-            logger.info(f"New citizenship application submitted by {interaction.user} (ID: {interaction.user.id})")
 
         except Exception as e:
-            logger.error(f"Error processing citizenship application: {e}")
+            logger.error(f"Error submitting citizenship application: {e}")
             if not interaction.response.is_done():
                 await interaction.response.send_message(
-                    "❌ An error occurred while processing your application. Please try again later.",
+                    "❌ An error occurred while submitting your application. Please try again.",
                     ephemeral=True
                 )
-    
+            else:
+                await interaction.followup.send(
+                    "❌ An error occurred while submitting your application. Please try again.",
+                    ephemeral=True
+                )
+
     async def on_error(self, interaction: discord.Interaction, error: Exception):
         """Handle modal errors"""
         logger.error(f"Modal error: {error}")
-        
+
         # Try to respond if we haven't already
         if not interaction.response.is_done():
             await interaction.response.send_message(

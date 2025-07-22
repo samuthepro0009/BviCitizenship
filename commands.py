@@ -22,35 +22,43 @@ class CommandHandlers:
     
     async def handle_citizenship_application(self, interaction: discord.Interaction):
         """Handle citizenship application command - show interactive dashboard"""
-        # Import dashboard dynamically to avoid circular imports
-        from forms import CitizenshipDashboard
-        
-        # Create the main dashboard embed with BVI banner
-        embed = discord.Embed(
-            title="🏴󠁧󠁢󠁥󠁮󠁧󠁿 British Virgin Islands Citizenship Services",
-            color=settings.embeds.application_submitted,
-            description="**Welcome to the British Virgin Islands Citizenship Portal**\n\n"
-                       "Use the buttons below to:\n"
-                       "• Apply for BVI citizenship\n"
-                       "• Check your application status\n"
-                       "• Learn about citizenship benefits\n"
-                       "• Contact our support team\n\n"
-                       "*Applications are reviewed by our citizenship management team*"
-        )
-        
-        # Set the BVI banner image
-        embed.set_image(url="https://i.imgur.com/G1wrrwI.png")
-        embed.set_footer(text="British Virgin Islands • Citizenship Portal", icon_url="https://i.imgur.com/G1wrrwI.png")
-        
-        # Create the interactive dashboard
-        dashboard = CitizenshipDashboard()
-        
-        # Send the embed with the interactive buttons
-        await interaction.response.send_message(
-            embed=embed, 
-            view=dashboard, 
-            ephemeral=True
-        )
+        try:
+            # Import dashboard dynamically to avoid circular imports
+            from forms import CitizenshipDashboard
+            
+            # Create the main dashboard embed with BVI banner
+            embed = discord.Embed(
+                title="🏴󠁧󠁢󠁥󠁮󠁧󠁿 British Virgin Islands Citizenship Services",
+                color=settings.embeds.application_submitted,
+                description="**Welcome to the British Virgin Islands Citizenship Portal**\n\n"
+                           "Use the buttons below to:\n"
+                           "• Apply for BVI citizenship\n"
+                           "• Check your application status\n"
+                           "• Learn about citizenship benefits\n"
+                           "• Contact our support team\n\n"
+                           "*Applications are reviewed by our citizenship management team*"
+            )
+            
+            # Set the BVI banner image
+            embed.set_image(url="https://i.imgur.com/G1wrrwI.png")
+            embed.set_footer(text="British Virgin Islands • Citizenship Portal", icon_url="https://i.imgur.com/G1wrrwI.png")
+            
+            # Create the interactive dashboard
+            dashboard = CitizenshipDashboard()
+            
+            # Send the embed with the interactive buttons
+            await interaction.response.send_message(
+                embed=embed, 
+                view=dashboard, 
+                ephemeral=True
+            )
+        except Exception as e:
+            logger.error(f"Error in citizenship application command: {e}")
+            if not interaction.response.is_done():
+                await interaction.response.send_message(
+                    "❌ An error occurred. Please try again.",
+                    ephemeral=True
+                )
     
     async def handle_citizenship_accept(self, interaction: discord.Interaction, user: discord.Member):
         """Handle citizenship acceptance command"""
@@ -89,8 +97,21 @@ class CommandHandlers:
             await status_channel.send(embed=embed)
 
         # Send DM to applicant
-        dm_embed = EmbedBuilder.create_dm_approval_embed()
-        await DMManager.send_dm_safe(user, dm_embed)
+        try:
+            dm_embed = discord.Embed(
+                title="🎉 Citizenship Application Approved!",
+                color=settings.embeds.application_approved,
+                description="Congratulations! Your application for British Virgin Islands citizenship has been **approved**.\n\n"
+                           "You are now officially a citizen of the British Virgin Islands! 🏴󠁧󠁢󠁥󠁮󠁧󠁿"
+            )
+            dm_embed.set_footer(text="British Virgin Islands • Citizenship Services")
+            
+            await user.send(embed=dm_embed)
+            logger.info(f"Successfully sent approval DM to {user}")
+        except discord.Forbidden:
+            logger.warning(f"Could not send DM to {user} - DMs may be disabled")
+        except Exception as e:
+            logger.error(f"Error sending DM to {user}: {e}")
 
         await interaction.response.send_message(
             settings.messages.approval_success.format(user=user.mention),
@@ -136,8 +157,22 @@ class CommandHandlers:
             await status_channel.send(embed=embed)
 
         # Send DM to applicant
-        dm_embed = EmbedBuilder.create_dm_decline_embed(reason)
-        await DMManager.send_dm_safe(user, dm_embed)
+        try:
+            dm_embed = discord.Embed(
+                title="❌ Citizenship Application Declined",
+                color=settings.embeds.application_declined,
+                description=f"Unfortunately, your application for British Virgin Islands citizenship has been **declined**.\n\n"
+                           f"**Reason:** {reason}\n\n"
+                           f"You may reapply in the future if circumstances change."
+            )
+            dm_embed.set_footer(text="British Virgin Islands • Citizenship Services")
+            
+            await user.send(embed=dm_embed)
+            logger.info(f"Successfully sent decline DM to {user}")
+        except discord.Forbidden:
+            logger.warning(f"Could not send DM to {user} - DMs may be disabled")
+        except Exception as e:
+            logger.error(f"Error sending DM to {user}: {e}")
 
         await interaction.response.send_message(
             settings.messages.decline_success.format(user=user.mention),
