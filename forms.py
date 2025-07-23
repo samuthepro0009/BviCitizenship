@@ -49,7 +49,7 @@ class CitizenshipDashboard(discord.ui.View):
             submitted_time = "Recently"
             if hasattr(application, 'submitted_at') and application.submitted_at:
                 submitted_time = f"<t:{int(application.submitted_at.timestamp())}:R>"
-            
+
             embed = discord.Embed(
                 title="📋 Your Application Status",
                 color=settings.embeds.application_submitted,
@@ -208,12 +208,16 @@ class CitizenshipModal(discord.ui.Modal):
             # Log to citizenship-log channel
             if interaction.guild:
                 log_channel = ChannelManager.get_citizenship_log_channel(interaction.guild)
+                if log_channel:
+                    embed = EmbedBuilder.create_application_embed(application, interaction.user)
+                    await log_channel.send(embed=embed)
 
-            if log_channel:
-                embed = EmbedBuilder.create_application_embed(application, interaction.user)
-                await log_channel.send(embed=embed)
-            else:
-                logger.warning("Could not find citizenship-log channel")
+            # Log to comprehensive logging system
+            bot = interaction.client
+            if hasattr(bot, 'comprehensive_logger') and bot.comprehensive_logger:
+                await bot.comprehensive_logger.log_citizenship_application_submitted(
+                    application, interaction.user
+                )
 
             logger.info(f"New citizenship application submitted by {interaction.user} (ID: {interaction.user.id})")
 
@@ -246,3 +250,4 @@ class CitizenshipModal(discord.ui.Modal):
                 "❌ An error occurred while processing your application. Please try again later.",
                 ephemeral=True
             )
+```

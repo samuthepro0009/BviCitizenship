@@ -126,6 +126,12 @@ class CommandHandlers:
             if status_channel:
                 embed = EmbedBuilder.create_approval_embed(user, interaction.user, application)
                 await status_channel.send(embed=embed)
+        
+        # Log to comprehensive logging system
+        if hasattr(self.bot, 'comprehensive_logger') and self.bot.comprehensive_logger:
+            await self.bot.comprehensive_logger.log_citizenship_application_approved(
+                application, user, interaction.user
+            )
 
         # Send DM to applicant
         try:
@@ -154,17 +160,11 @@ class CommandHandlers:
         except Exception as e:
             logger.error(f"Error sending DM to {user}: {e}")
 
-        # Use followup since we're not deferring this command
-        try:
-            await interaction.response.send_message(
-                settings.messages.approval_success.format(user=user.mention),
-                ephemeral=True
-            )
-        except discord.errors.InteractionResponded:
-            await interaction.followup.send(
-                settings.messages.approval_success.format(user=user.mention),
-                ephemeral=True
-            )
+        # Respond to the interaction
+        await interaction.response.send_message(
+            settings.messages.approval_success.format(user=user.mention),
+            ephemeral=True
+        )
 
     async def handle_citizenship_decline(self, interaction: discord.Interaction, 
                                        user: discord.Member, reason: str = "No reason provided"):
@@ -203,6 +203,12 @@ class CommandHandlers:
         if status_channel:
             embed = EmbedBuilder.create_decline_embed(user, interaction.user, reason)
             await status_channel.send(embed=embed)
+        
+        # Log to comprehensive logging system
+        if hasattr(self.bot, 'comprehensive_logger') and self.bot.comprehensive_logger:
+            await self.bot.comprehensive_logger.log_citizenship_application_rejected(
+                application, user, interaction.user, reason
+            )
 
         # Send DM to applicant
         try:
@@ -219,11 +225,12 @@ class CommandHandlers:
                            f"• Contact our support team if you have questions\n"
                            f"• Review citizenship requirements before reapplying"
             )
+            dm_embed.set_image(url="https://i.imgur.com/Pf2iXAV.png")
             dm_embed.set_footer(
                 text="Government of the British Virgin Islands | Citizenship Department", 
-                icon_url="https://i.imgur.com/CrYmk02.png"
+                icon_url="https://i.imgur.com/xqmqk9x.png"
             )
-            dm_embed.set_thumbnail(url="https://i.imgur.com/CrYmk02.png")
+            dm_embed.set_thumbnail(url="https://i.imgur.com/xqmqk9x.png")
 
             await user.send(embed=dm_embed)
             logger.info(f"Successfully sent decline DM to {user}")
@@ -232,17 +239,11 @@ class CommandHandlers:
         except Exception as e:
             logger.error(f"Error sending DM to {user}: {e}")
 
-        # Use followup if response already processed, otherwise use response
-        try:
-            await interaction.response.send_message(
-                settings.messages.decline_success.format(user=user.mention),
-                ephemeral=True
-            )
-        except discord.errors.InteractionResponded:
-            await interaction.followup.send(
-                settings.messages.decline_success.format(user=user.mention),
-                ephemeral=True
-            )
+        # Respond to the interaction
+        await interaction.response.send_message(
+            settings.messages.decline_success.format(user=user.mention),
+            ephemeral=True
+        )
 
     async def handle_ban_command(self, interaction: discord.Interaction, user: discord.Member, 
                                place_id: str, reason: str = "No reason provided"):

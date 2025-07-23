@@ -12,6 +12,7 @@ from advanced_features import EnhancedCitizenshipDashboard, application_tracker,
 from notification_system import notification_manager, NotificationType
 from enhanced_admin_commands import setup_enhanced_admin_commands
 from models import CitizenshipApplication
+from comprehensive_logging import initialize_logger
 
 # Set up logging
 logger = settings.setup_logging()
@@ -37,6 +38,9 @@ class BVIBot(commands.Bot):
         
         # Initialize command handler
         self.command_handler = CommandHandlers(self)
+        
+        # Initialize comprehensive logger
+        self.comprehensive_logger = None
         
         # Set up slash commands
         self._setup_commands()
@@ -95,6 +99,10 @@ class BVIBot(commands.Bot):
         """Called when the bot is ready"""
         print(f"🤖 {self.user} connected to Discord")
         
+        # Initialize comprehensive logger
+        self.comprehensive_logger = initialize_logger(self)
+        print("📋 Comprehensive logging system initialized")
+        
         # Clear any existing applications to fix submitted_at errors
         self.pending_applications.clear()
         print("🧹 Cleared existing applications to prevent errors")
@@ -112,6 +120,52 @@ class BVIBot(commands.Bot):
             
         except Exception as e:
             logger.error(f"❌ Failed to sync commands: {e}")
+
+    async def on_member_join(self, member: discord.Member):
+        """Called when a member joins the server"""
+        if self.comprehensive_logger:
+            await self.comprehensive_logger.log_member_join(member)
+        
+        # Send welcome message
+        try:
+            await notification_manager.send_welcome_message(member)
+        except Exception as e:
+            logger.error(f"Error sending welcome message: {e}")
+
+    async def on_member_remove(self, member: discord.Member):
+        """Called when a member leaves the server"""
+        if self.comprehensive_logger:
+            await self.comprehensive_logger.log_member_leave(member)
+
+    async def on_member_ban(self, guild: discord.Guild, user: discord.User):
+        """Called when a member is banned"""
+        if self.comprehensive_logger:
+            await self.comprehensive_logger.log_member_ban(guild, user)
+
+    async def on_member_unban(self, guild: discord.Guild, user: discord.User):
+        """Called when a member is unbanned"""
+        if self.comprehensive_logger:
+            await self.comprehensive_logger.log_member_unban(guild, user)
+
+    async def on_message_delete(self, message: discord.Message):
+        """Called when a message is deleted"""
+        if self.comprehensive_logger:
+            await self.comprehensive_logger.log_message_delete(message)
+
+    async def on_message_edit(self, before: discord.Message, after: discord.Message):
+        """Called when a message is edited"""
+        if self.comprehensive_logger:
+            await self.comprehensive_logger.log_message_edit(before, after)
+
+    async def on_guild_role_create(self, role: discord.Role):
+        """Called when a role is created"""
+        if self.comprehensive_logger:
+            await self.comprehensive_logger.log_role_create(role)
+
+    async def on_guild_role_delete(self, role: discord.Role):
+        """Called when a role is deleted"""
+        if self.comprehensive_logger:
+            await self.comprehensive_logger.log_role_delete(role)
 
     async def on_command_error(self, ctx, error):
         """Handle command errors"""
