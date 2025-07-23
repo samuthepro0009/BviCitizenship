@@ -2,6 +2,7 @@
 Discord command handlers for the British Virgin Islands Bot
 """
 import logging
+import os
 from typing import Optional
 import discord
 from discord import app_commands
@@ -43,17 +44,18 @@ class CommandHandlers:
                            "*All applications are reviewed by our certified citizenship management team*"
             )
 
-            # Use reliable BVI flag images that work in Discord
-            embed.set_image(url="https://flagcdn.com/w1280/vg.png")
+            # Use the custom BVI coat of arms images
+            base_url = os.environ.get('RENDER_EXTERNAL_URL', 'http://localhost:5000')
+            embed.set_image(url=f"{base_url}/assets/bvi_banner.png")
 
-            # Set the footer with BVI flag icon
+            # Set the footer with BVI coat of arms icon
             embed.set_footer(
                 text="Government of the British Virgin Islands | Citizenship Department", 
-                icon_url="https://flagcdn.com/w40/vg.png"
+                icon_url=f"{base_url}/assets/bvi_icon.png"
             )
 
             # Add thumbnail for additional branding
-            embed.set_thumbnail(url="https://flagcdn.com/w40/vg.png")
+            embed.set_thumbnail(url=f"{base_url}/assets/bvi_icon.png")
 
             # Create the interactive dashboard
             dashboard = CitizenshipDashboard()

@@ -2,7 +2,7 @@
 Keep-alive service for the British Virgin Islands Discord Bot
 Prevents the bot from sleeping on hosting platforms like Render
 """
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory
 import threading
 import time
 import requests
@@ -43,6 +43,11 @@ def status():
         "citizenship_manager_role_configured": settings.get_citizenship_manager_role_id() != 0,
         "port": settings.get_port()
     }), 200
+
+@app.route('/assets/<filename>')
+def serve_assets(filename):
+    """Serve static assets for the Discord bot"""
+    return send_from_directory('assets', filename)
 
 def run_flask():
     """Run the Flask server"""
