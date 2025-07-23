@@ -22,21 +22,55 @@ class ComprehensiveLogger:
     async def get_log_channel(self) -> Optional[discord.TextChannel]:
         """Get the comprehensive log channel"""
         try:
+            logger.debug(f"Attempting to get log channel with ID: {self.log_channel_id}")
+            
+            # First try to get from cache
             channel = self.bot.get_channel(self.log_channel_id)
+            
             if channel and isinstance(channel, discord.TextChannel):
+                logger.debug(f"Found channel in cache: {channel.name}")
                 return channel
+            
+            # If not in cache, try to fetch it
+            try:
+                channel = await self.bot.fetch_channel(self.log_channel_id)
+                if isinstance(channel, discord.TextChannel):
+                    logger.debug(f"Fetched channel from API: {channel.name}")
+                    return channel
+            except discord.NotFound:
+                logger.error(f"Channel {self.log_channel_id} not found")
+            except discord.Forbidden:
+                logger.error(f"Bot lacks permission to access channel {self.log_channel_id}")
+            except Exception as fetch_error:
+                logger.error(f"Error fetching channel {self.log_channel_id}: {fetch_error}")
+            
+            logger.warning(f"Could not find or access log channel {self.log_channel_id}")
             return None
+            
         except Exception as e:
-            logger.error(f"Error getting log channel: {e}")
+            logger.error(f"Unexpected error getting log channel: {e}")
             return None
     
     async def log_event(self, title: str, description: str, color: int = 0x3498db, 
                        fields: Optional[list] = None, user: Optional[discord.Member] = None):
         """Log an event to the comprehensive log channel"""
         try:
+            logger.info(f"Attempting to log event: {title}")
+            
             log_channel = await self.get_log_channel()
             if not log_channel:
-                logger.warning("Log channel not found")
+                logger.error(f"Log channel {self.log_channel_id} not found or inaccessible")
+                return
+            
+            logger.info(f"Found log channel: {log_channel.name} (ID: {log_channel.id})")
+            
+            # Check bot permissions in the channel
+            permissions = log_channel.permissions_for(log_channel.guild.me)
+            if not permissions.send_messages:
+                logger.error(f"Bot lacks send_messages permission in {log_channel.name}")
+                return
+            if not permissions.embed_links:
+                logger.error(f"Bot lacks embed_links permission in {log_channel.name}")
                 return
             
             embed = discord.Embed(
@@ -47,28 +81,51 @@ class ComprehensiveLogger:
             )
             
             if user:
-                embed.set_author(
-                    name=f"{user.display_name} ({user})",
-                    icon_url=user.display_avatar.url if user.display_avatar else None
-                )
+                try:
+                    embed.set_author(
+                        name=f"{user.display_name} ({user})",
+                        icon_url=user.display_avatar.url if user.display_avatar else None
+                    )
+                except Exception as author_error:
+                    logger.warning(f"Failed to set embed author: {author_error}")
             
             if fields:
-                for field in fields:
-                    embed.add_field(
-                        name=field.get('name', 'Field'),
-                        value=field.get('value', 'N/A'),
-                        inline=field.get('inline', False)
-                    )
+                for i, field in enumerate(fields):
+                    try:
+                        # Ensure field values are strings and not too long
+                        field_name = str(field.get('name', f'Field {i+1}'))[:256]
+                        field_value = str(field.get('value', 'N/A'))[:1024]
+                        field_inline = bool(field.get('inline', False))
+                        
+                        embed.add_field(
+                            name=field_name,
+                            value=field_value,
+                            inline=field_inline
+                        )
+                    except Exception as field_error:
+                        logger.warning(f"Failed to add field {i}: {field_error}")
             
             embed.set_footer(
                 text="British Virgin Islands Comprehensive Log",
                 icon_url="https://i.imgur.com/xqmqk9x.png"
             )
             
-            await log_channel.send(embed=embed)
+            # Ensure embed is within Discord limits
+            if len(embed) > 6000:
+                logger.warning("Embed too large, truncating description")
+                embed.description = embed.description[:2000] + "... (truncated)"
             
+            await log_channel.send(embed=embed)
+            logger.info(f"Successfully logged event: {title}")
+            
+        except discord.HTTPException as http_error:
+            logger.error(f"Discord HTTP error logging event '{title}': {http_error}")
+        except discord.Forbidden:
+            logger.error(f"Forbidden error - bot lacks permissions to log in channel {self.log_channel_id}")
         except Exception as e:
-            logger.error(f"Error logging event: {e}")
+            logger.error(f"Unexpected error logging event '{title}': {e}")
+            import traceback
+            logger.error(f"Full traceback: {traceback.format_exc()}")
     
     async def log_citizenship_application_submitted(self, application, user: discord.User):
         """Log detailed citizenship application submission"""

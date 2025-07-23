@@ -250,4 +250,3 @@ class CitizenshipModal(discord.ui.Modal):
                 "❌ An error occurred while processing your application. Please try again later.",
                 ephemeral=True
             )
-```
