@@ -399,34 +399,31 @@ class ComprehensiveLogger:
             },
             ]
         
-        # Always show content field, but handle different scenarios
-        if message.content:
-            # Message has text content
-            content_value = f"```\n{message.content[:900]}{'...' if len(message.content) > 900 else ''}\n```"
-        else:
-            # Message has no text content
-            content_value = "*No text content*"
+        # Build content field with all message components
+        content_parts = []
         
-        # Add attachment info to content if present
+        # Add text content if present
+        if message.content:
+            content_parts.append(f"**Text:**\n```\n{message.content[:800]}{'...' if len(message.content) > 800 else ''}\n```")
+        
+        # Add attachment info if present
         if message.attachments:
             attachment_info = '\n'.join([f"📎 {att.filename} ({att.size} bytes)" for att in message.attachments])
-            if message.content:
-                content_value += f"\n\n**Attachments:**\n{attachment_info}"
-            else:
-                content_value = f"**Attachments:**\n{attachment_info}"
+            content_parts.append(f"**Attachments:**\n{attachment_info}")
         
-        # Add embed info to content if present
+        # Add embed info if present
         if message.embeds:
             embed_info = []
             for i, embed in enumerate(message.embeds[:3]):  # Limit to first 3 embeds
                 embed_title = embed.title or "Untitled Embed"
                 embed_info.append(f"🔗 **{embed_title}**" + (f" - {embed.description[:50]}..." if embed.description else ""))
-            
-            embed_text = '\n'.join(embed_info)
-            if message.content or message.attachments:
-                content_value += f"\n\n**Embeds:**\n{embed_text}"
-            else:
-                content_value = f"**Embeds:**\n{embed_text}"
+            content_parts.append(f"**Embeds:**\n" + '\n'.join(embed_info))
+        
+        # If no content at all
+        if not content_parts:
+            content_value = "*Message had no content*"
+        else:
+            content_value = '\n\n'.join(content_parts)
         
         fields.append({
             'name': '📝 Message Content',
