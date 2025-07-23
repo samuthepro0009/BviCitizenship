@@ -23,7 +23,7 @@ class CitizenshipDashboard(discord.ui.View):
         """Handle citizenship application button"""
         # Check if user already has a pending application
         bot = interaction.client
-        if hasattr(bot, 'pending_applications') and hasattr(bot, 'pending_applications') and interaction.user.id in bot.pending_applications:
+        if hasattr(bot, 'pending_applications') and interaction.user.id in bot.pending_applications:
             await interaction.response.send_message(
                 settings.messages.application_exists,
                 ephemeral=True
@@ -96,9 +96,9 @@ class CitizenshipDashboard(discord.ui.View):
         )
         embed.set_footer(
             text="Government of the British Virgin Islands | Citizenship Department", 
-            icon_url="https://i.imgur.com/CrYmk02.png"
+            icon_url="https://i.imgur.com/xqmqk9x.png"
         )
-        embed.set_thumbnail(url="https://i.imgur.com/CrYmk02.png")
+        embed.set_thumbnail(url="https://i.imgur.com/xqmqk9x.png")
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
     @discord.ui.button(
@@ -128,9 +128,9 @@ class CitizenshipDashboard(discord.ui.View):
         )
         embed.set_footer(
             text="Government of the British Virgin Islands | Citizenship Department", 
-            icon_url="https://i.imgur.com/CrYmk02.png"
+            icon_url="https://i.imgur.com/xqmqk9x.png"
         )
-        embed.set_thumbnail(url="https://i.imgur.com/CrYmk02.png")
+        embed.set_thumbnail(url="https://i.imgur.com/xqmqk9x.png")
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
     async def on_timeout(self):

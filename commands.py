@@ -26,8 +26,8 @@ class CommandHandlers:
         try:
             # Don't defer - respond immediately with the embed
             
-            # Import dashboard dynamically to avoid circular imports
-            from forms import CitizenshipDashboard
+            # Import enhanced dashboard dynamically to avoid circular imports
+            from advanced_features import EnhancedCitizenshipDashboard, application_tracker
 
             # Create the main dashboard embed with professional styling
             embed = discord.Embed(
@@ -56,8 +56,8 @@ class CommandHandlers:
             # Add thumbnail for additional branding
             embed.set_thumbnail(url="https://i.imgur.com/xqmqk9x.png")
 
-            # Create the interactive dashboard
-            dashboard = CitizenshipDashboard()
+            # Create the enhanced interactive dashboard
+            dashboard = EnhancedCitizenshipDashboard(application_tracker)
 
             # Send the embed with the interactive buttons using response
             await interaction.response.send_message(

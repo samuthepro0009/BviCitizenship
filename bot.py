@@ -8,6 +8,9 @@ from discord.ext import commands
 from discord import app_commands
 from config import settings
 from commands import CommandHandlers
+from advanced_features import EnhancedCitizenshipDashboard, application_tracker, AdminManagementCommands
+from notification_system import notification_manager, NotificationType
+from enhanced_admin_commands import setup_enhanced_admin_commands
 from models import CitizenshipApplication
 
 # Set up logging
