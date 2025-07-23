@@ -23,8 +23,7 @@ class CommandHandlers:
     async def handle_citizenship_application(self, interaction: discord.Interaction):
         """Handle citizenship application command - show interactive dashboard"""
         try:
-            # Defer the interaction immediately to prevent timeout
-            await interaction.response.defer(ephemeral=True)
+            # Don't defer - respond immediately with the embed
             
             # Import dashboard dynamically to avoid circular imports
             from forms import CitizenshipDashboard
@@ -44,42 +43,44 @@ class CommandHandlers:
                            "*All applications are reviewed by our certified citizenship management team*"
             )
 
-            # Use the converted direct imgur URLs
-            embed.set_image(url="https://i.imgur.com/IFnbn94.png")
+            # Use reliable BVI flag images that work in Discord
+            embed.set_image(url="https://flagcdn.com/w1280/vg.png")
 
-            # Set the footer with the BVI icon
+            # Set the footer with BVI flag icon
             embed.set_footer(
                 text="Government of the British Virgin Islands | Citizenship Department", 
-                icon_url="https://i.imgur.com/CrYmk02.png"
+                icon_url="https://flagcdn.com/w40/vg.png"
             )
 
             # Add thumbnail for additional branding
-            embed.set_thumbnail(url="https://i.imgur.com/CrYmk02.png")
+            embed.set_thumbnail(url="https://flagcdn.com/w40/vg.png")
 
             # Create the interactive dashboard
             dashboard = CitizenshipDashboard()
 
-            # Send the embed with the interactive buttons using followup
-            await interaction.followup.send(
+            # Send the embed with the interactive buttons using response
+            await interaction.response.send_message(
                 embed=embed, 
                 view=dashboard, 
                 ephemeral=True
             )
         except Exception as e:
             print(f"❌ Error in citizenship application command: {e}")
-            try:
-                if not interaction.response.is_done():
-                    await interaction.response.send_message(
-                        "❌ An error occurred. Please try again.",
-                        ephemeral=True
-                    )
-                else:
-                    await interaction.followup.send(
-                        "❌ An error occurred. Please try again.",
-                        ephemeral=True
-                    )
-            except Exception as follow_error:
-                print(f"❌ Failed to send error message: {follow_error}")
+            # Don't try to respond on timeout errors to prevent double acknowledgment
+            if "Unknown interaction" not in str(e):
+                try:
+                    if not interaction.response.is_done():
+                        await interaction.response.send_message(
+                            "❌ An error occurred. Please try again.",
+                            ephemeral=True
+                        )
+                    else:
+                        await interaction.followup.send(
+                            "❌ An error occurred. Please try again.",
+                            ephemeral=True
+                        )
+                except Exception as follow_error:
+                    print(f"❌ Failed to send error message: {follow_error}")
 
     async def handle_citizenship_accept(self, interaction: discord.Interaction, user: discord.Member):
         """Handle citizenship acceptance command"""
