@@ -45,7 +45,7 @@ class CommandHandlers:
             )
 
             # Use the uploaded BVI coat of arms images from imgur
-            embed.set_image(url="https://i.imgur.com/JGtwLEq.png")
+            embed.set_image(url="https://i.imgur.com/Pf2iXAV.png")
 
             # Set the footer with BVI coat of arms icon
             embed.set_footer(
