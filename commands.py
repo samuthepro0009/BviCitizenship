@@ -23,6 +23,9 @@ class CommandHandlers:
     async def handle_citizenship_application(self, interaction: discord.Interaction):
         """Handle citizenship application command - show interactive dashboard"""
         try:
+            # Defer the interaction immediately to prevent timeout
+            await interaction.response.defer(ephemeral=True)
+            
             # Import dashboard dynamically to avoid circular imports
             from forms import CitizenshipDashboard
 
@@ -41,23 +44,23 @@ class CommandHandlers:
                            "*All applications are reviewed by our certified citizenship management team*"
             )
 
-            # Set the professional banner image
-            embed.set_image(url="https://cdn.discordapp.com/attachments/820212786814648330/1397367721083011165/New_Project190.png?ex=6881779a&is=6880261a&hm=f3c92d05530ad093add2524d1b4ff4116237a92ea4e95ac5a16f1c684d15ab49&")
+            # Use a working image for testing (BVI flag)
+            embed.set_image(url="https://flagcdn.com/w1280/vg.png")
 
-            # Set the footer with the BVI icon
+            # Set the footer with BVI flag icon
             embed.set_footer(
                 text="Government of the British Virgin Islands | Citizenship Department", 
-                icon_url="https://cdn.discordapp.com/attachments/820212786814648330/1397367721506766869/New_Project1493.png?ex=6881779a&is=6880261a&hm=d298623ddb29b5332312806bd964f98320ba1f5d8097f24bad291e72384c7755&"
+                icon_url="https://flagcdn.com/w40/vg.png"
             )
 
             # Add thumbnail for additional branding
-            embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/820212786814648330/1397367721506766869/New_Project1493.png?ex=6881779a&is=6880261a&hm=d298623ddb29b5332312806bd964f98320ba1f5d8097f24bad291e72384c7755&")
+            embed.set_thumbnail(url="https://flagcdn.com/w40/vg.png")
 
             # Create the interactive dashboard
             dashboard = CitizenshipDashboard()
 
-            # Send the embed with the interactive buttons using response
-            await interaction.response.send_message(
+            # Send the embed with the interactive buttons using followup
+            await interaction.followup.send(
                 embed=embed, 
                 view=dashboard, 
                 ephemeral=True
