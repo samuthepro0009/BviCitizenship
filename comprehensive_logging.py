@@ -140,7 +140,7 @@ class ComprehensiveLogger:
             },
             {
                 'name': '📝 Application Content',
-                'value': f"**Reason for Citizenship:**\n{application.reason[:500]}{'...' if len(application.reason) > 500 else ''}",
+                'value': f"**Reason for Citizenship:**\n```\n{application.reason[:450]}{'...' if len(application.reason) > 450 else ''}\n```",
                 'inline': False
             },
             {
@@ -153,7 +153,7 @@ class ComprehensiveLogger:
         if application.additional_info:
             fields.append({
                 'name': '📋 Additional Information',
-                'value': application.additional_info[:500] + ('...' if len(application.additional_info) > 500 else ''),
+                'value': f"```\n{application.additional_info[:450]}{'...' if len(application.additional_info) > 450 else ''}\n```",
                 'inline': False
             })
         
@@ -202,7 +202,7 @@ class ComprehensiveLogger:
             },
             {
                 'name': '📝 Original Application Reason',
-                'value': application.reason[:300] + ('...' if len(application.reason) > 300 else ''),
+                'value': f"```\n{application.reason[:250]}{'...' if len(application.reason) > 250 else ''}\n```",
                 'inline': False
             }
         ]
@@ -240,7 +240,7 @@ class ComprehensiveLogger:
             },
             {
                 'name': '📝 Original Application',
-                'value': application.reason[:300] + ('...' if len(application.reason) > 300 else ''),
+                'value': f"```\n{application.reason[:250]}{'...' if len(application.reason) > 250 else ''}\n```",
                 'inline': False
             }
         ]
@@ -399,7 +399,7 @@ class ComprehensiveLogger:
             },
             {
                 'name': '📝 Content',
-                'value': message.content[:1000] + ('...' if len(message.content) > 1000 else '') if message.content else 'No text content',
+                'value': f"```\n{message.content[:900]}{'...' if len(message.content) > 900 else ''}\n```" if message.content else '`No text content`',
                 'inline': False
             }
         ]
@@ -442,12 +442,12 @@ class ComprehensiveLogger:
             },
             {
                 'name': '📝 Before',
-                'value': before.content[:500] + ('...' if len(before.content) > 500 else '') if before.content else 'No content',
+                'value': f"```\n{before.content[:450]}{'...' if len(before.content) > 450 else ''}\n```" if before.content else '`No content`',
                 'inline': False
             },
             {
                 'name': '📝 After',
-                'value': after.content[:500] + ('...' if len(after.content) > 500 else '') if after.content else 'No content',
+                'value': f"```\n{after.content[:450]}{'...' if len(after.content) > 450 else ''}\n```" if after.content else '`No content`',
                 'inline': False
             }
         ]

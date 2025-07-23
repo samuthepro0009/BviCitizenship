@@ -134,10 +134,12 @@ class BVIBot(commands.Bot):
             logger.info(f"Synced {len(synced)} slash commands: {[cmd.name for cmd in synced]}")
 
             # Log configuration
-            print(f"🔧 Admin roles configured: {len(settings.admin_role_ids)} roles")
-            print(f"🔧 Citizenship manager roles: {len(settings.citizenship_manager_role_ids)} roles")
-            logger.info(f"Admin roles: {settings.admin_role_ids}")
-            logger.info(f"Citizenship manager roles: {settings.citizenship_manager_role_ids}")
+            admin_roles = settings.get_admin_roles()
+            citizenship_roles = settings.get_citizenship_manager_roles()
+            print(f"🔧 Admin roles configured: {len(admin_roles)} roles")
+            print(f"🔧 Citizenship manager roles: {len(citizenship_roles)} roles")
+            logger.info(f"Admin roles: {admin_roles}")
+            logger.info(f"Citizenship manager roles: {citizenship_roles}")
 
             print("🚀 BVI Discord Bot ready for citizenship applications!")
             logger.info("Bot initialization completed successfully")
