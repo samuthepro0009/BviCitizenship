@@ -44,17 +44,17 @@ class CommandHandlers:
                            "*All applications are reviewed by our certified citizenship management team*"
             )
 
-            # Use a working image for testing (BVI flag)
-            embed.set_image(url="https://flagcdn.com/w1280/vg.png")
+            # Use the converted direct imgur URLs
+            embed.set_image(url="https://i.imgur.com/IFnbn94.png")
 
-            # Set the footer with BVI flag icon
+            # Set the footer with the BVI icon
             embed.set_footer(
                 text="Government of the British Virgin Islands | Citizenship Department", 
-                icon_url="https://flagcdn.com/w40/vg.png"
+                icon_url="https://i.imgur.com/CrYmk02.png"
             )
 
             # Add thumbnail for additional branding
-            embed.set_thumbnail(url="https://flagcdn.com/w40/vg.png")
+            embed.set_thumbnail(url="https://i.imgur.com/CrYmk02.png")
 
             # Create the interactive dashboard
             dashboard = CitizenshipDashboard()
