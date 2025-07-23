@@ -143,9 +143,9 @@ class CommandHandlers:
             )
             dm_embed.set_footer(
                 text="Government of the British Virgin Islands | Citizenship Department", 
-                icon_url="https://i.imgur.com/CrYmk02.png"
+                icon_url="https://i.imgur.com/xqmqk9x.png"
             )
-            dm_embed.set_thumbnail(url="https://i.imgur.com/CrYmk02.png")
+            dm_embed.set_thumbnail(url="https://i.imgur.com/xqmqk9x.png")
 
             await user.send(embed=dm_embed)
             logger.info(f"Successfully sent approval DM to {user}")
