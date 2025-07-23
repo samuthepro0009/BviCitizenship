@@ -41,17 +41,17 @@ class CommandHandlers:
                            "*All applications are reviewed by our certified citizenship management team*"
             )
 
-            # Set the professional banner image (using a working image)
-            embed.set_image(url="https://i.imgur.com/dOvxZF7.png")
+            # Set the professional banner image
+            embed.set_image(url="https://cdn.discordapp.com/attachments/820212786814648330/1397367721083011165/New_Project190.png?ex=6881779a&is=6880261a&hm=f3c92d05530ad093add2524d1b4ff4116237a92ea4e95ac5a16f1c684d15ab49&")
 
-            # Set the footer with the new icon (using a working image)
+            # Set the footer with the BVI icon
             embed.set_footer(
                 text="Government of the British Virgin Islands | Citizenship Department", 
-                icon_url="https://i.imgur.com/dOvxZF7.png"
+                icon_url="https://cdn.discordapp.com/attachments/820212786814648330/1397367721506766869/New_Project1493.png?ex=6881779a&is=6880261a&hm=d298623ddb29b5332312806bd964f98320ba1f5d8097f24bad291e72384c7755&"
             )
 
             # Add thumbnail for additional branding
-            embed.set_thumbnail(url="https://i.imgur.com/dOvxZF7.png")
+            embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/820212786814648330/1397367721506766869/New_Project1493.png?ex=6881779a&is=6880261a&hm=d298623ddb29b5332312806bd964f98320ba1f5d8097f24bad291e72384c7755&")
 
             # Create the interactive dashboard
             dashboard = CitizenshipDashboard()
