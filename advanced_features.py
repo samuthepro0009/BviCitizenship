@@ -378,7 +378,7 @@ class EnhancedCitizenshipDashboard(discord.ui.View):
             value="• **Direct Message:** Contact any staff member\n"
                   "• **Support Channel:** #general-support\n"
                   "• **Ticket System:** React below to create a ticket\n"
-                  "• **Email:** citizenship@bvi-discord.gov\n"
+                  "• **Email:** british.virgin.islands.rblx@gmail.com\n"
                   "• **Emergency:** @Admin or @Citizenship Manager",
             inline=False
         )
