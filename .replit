@@ -5,7 +5,7 @@ channel = "stable-24_05"
 packages = ["openssl", "postgresql"]
 
 [workflows]
-runButton = "Project"
+runButton = "Start Bot"
 
 [[workflows.workflow]]
 name = "Project"
@@ -49,6 +49,15 @@ author = "agent"
 task = "shell.exec"
 args = "gunicorn --bind 0.0.0.0:5000 --reuse-port --reload main:app"
 waitForPort = 5000
+
+[[workflows.workflow]]
+name = "Start Bot"
+author = 45392368
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "pip install discord.py flask requests && python main.py"
 
 [[ports]]
 localPort = 5000

@@ -42,6 +42,10 @@ class BVIBot(commands.Bot):
         # Initialize comprehensive logger
         self.comprehensive_logger = None
 
+        # Initialize comprehensive logging
+        from comprehensive_logging import initialize_logger
+        self.comprehensive_logger = initialize_logger(self)
+
         # Set up slash commands
         self._setup_commands()
 
@@ -204,77 +208,7 @@ class BVIBot(commands.Bot):
                 ephemeral=True
             )
 
-    # Initialize comprehensive logging system
-    from comprehensive_logging import initialize_logger
-    self.comprehensive_logger = initialize_logger(self)
-
-    # Add event handlers for comprehensive logging
-    if self.comprehensive_logger:
-        @self.event
-        async def on_member_join(member):
-            """Log member joins"""
-            try:
-                await self.comprehensive_logger.log_member_join(member)
-            except Exception as e:
-                logger.error(f"Error logging member join: {e}")
-
-        @self.event
-        async def on_member_remove(member):
-            """Log member leaves"""
-            try:
-                await self.comprehensive_logger.log_member_leave(member)
-            except Exception as e:
-                logger.error(f"Error logging member leave: {e}")
-
-        @self.event
-        async def on_member_ban(guild, user):
-            """Log member bans"""
-            try:
-                await self.comprehensive_logger.log_member_ban(guild, user)
-            except Exception as e:
-                logger.error(f"Error logging member ban: {e}")
-
-        @self.event
-        async def on_member_unban(guild, user):
-            """Log member unbans"""
-            try:
-                await self.comprehensive_logger.log_member_unban(guild, user)
-            except Exception as e:
-                logger.error(f"Error logging member unban: {e}")
-
-        @self.event
-        async def on_message_delete(message):
-            """Log message deletions"""
-            try:
-                if not message.author.bot:  # Don't log bot message deletions
-                    await self.comprehensive_logger.log_message_delete(message)
-            except Exception as e:
-                logger.error(f"Error logging message delete: {e}")
-
-        @self.event
-        async def on_message_edit(before, after):
-            """Log message edits"""
-            try:
-                if not before.author.bot and before.content != after.content:
-                    await self.comprehensive_logger.log_message_edit(before, after)
-            except Exception as e:
-                logger.error(f"Error logging message edit: {e}")
-
-        @self.event
-        async def on_guild_role_create(role):
-            """Log role creation"""
-            try:
-                await self.comprehensive_logger.log_role_create(role)
-            except Exception as e:
-                logger.error(f"Error logging role create: {e}")
-
-        @self.event
-        async def on_guild_role_delete(role):
-            """Log role deletion"""
-            try:
-                await self.comprehensive_logger.log_role_delete(role)
-            except Exception as e:
-                logger.error(f"Error logging role delete: {e}")
+    
 
 def create_bot() -> BVIBot:
     """Factory function to create and configure the bot"""
