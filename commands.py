@@ -44,18 +44,17 @@ class CommandHandlers:
                            "*All applications are reviewed by our certified citizenship management team*"
             )
 
-            # Use the custom BVI coat of arms images
-            base_url = os.environ.get('RENDER_EXTERNAL_URL', 'http://localhost:5000')
-            embed.set_image(url=f"{base_url}/assets/bvi_banner.png")
+            # Use the uploaded BVI coat of arms images from imgur
+            embed.set_image(url="https://i.imgur.com/JGtwLEq.png")
 
             # Set the footer with BVI coat of arms icon
             embed.set_footer(
                 text="Government of the British Virgin Islands | Citizenship Department", 
-                icon_url=f"{base_url}/assets/bvi_icon.png"
+                icon_url="https://i.imgur.com/xqmqk9x.png"
             )
 
             # Add thumbnail for additional branding
-            embed.set_thumbnail(url=f"{base_url}/assets/bvi_icon.png")
+            embed.set_thumbnail(url="https://i.imgur.com/xqmqk9x.png")
 
             # Create the interactive dashboard
             dashboard = CitizenshipDashboard()
