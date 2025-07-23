@@ -397,34 +397,42 @@ class ComprehensiveLogger:
                         f"**Created:** <t:{int(message.created_at.timestamp())}:F>",
                 'inline': True
             },
-            {
-                'name': '📝 Content',
-                'value': f"```\n{message.content[:900]}{'...' if len(message.content) > 900 else ''}\n```" if message.content else '*Message contains no text content*',
-                'inline': False
-            }
-        ]
+            ]
         
-        # Add attachment information
+        # Always show content field, but handle different scenarios
+        if message.content:
+            # Message has text content
+            content_value = f"```\n{message.content[:900]}{'...' if len(message.content) > 900 else ''}\n```"
+        else:
+            # Message has no text content
+            content_value = "*No text content*"
+        
+        # Add attachment info to content if present
         if message.attachments:
-            attachment_info = '\n'.join([f"• {att.filename} ({att.size} bytes)" for att in message.attachments])
-            fields.append({
-                'name': '📎 Attachments',
-                'value': attachment_info[:500] + ('...' if len(attachment_info) > 500 else ''),
-                'inline': False
-            })
+            attachment_info = '\n'.join([f"📎 {att.filename} ({att.size} bytes)" for att in message.attachments])
+            if message.content:
+                content_value += f"\n\n**Attachments:**\n{attachment_info}"
+            else:
+                content_value = f"**Attachments:**\n{attachment_info}"
         
-        # Add embed information if present
+        # Add embed info to content if present
         if message.embeds:
             embed_info = []
             for i, embed in enumerate(message.embeds[:3]):  # Limit to first 3 embeds
                 embed_title = embed.title or "Untitled Embed"
-                embed_info.append(f"• **{embed_title}**" + (f" - {embed.description[:50]}..." if embed.description else ""))
+                embed_info.append(f"🔗 **{embed_title}**" + (f" - {embed.description[:50]}..." if embed.description else ""))
             
-            fields.append({
-                'name': '🔗 Embeds',
-                'value': '\n'.join(embed_info)[:500] + ('...' if len('\n'.join(embed_info)) > 500 else ''),
-                'inline': False
-            })
+            embed_text = '\n'.join(embed_info)
+            if message.content or message.attachments:
+                content_value += f"\n\n**Embeds:**\n{embed_text}"
+            else:
+                content_value = f"**Embeds:**\n{embed_text}"
+        
+        fields.append({
+            'name': '📝 Message Content',
+            'value': content_value[:1024],  # Discord field limit
+            'inline': False
+        })
         
         await self.log_event(
             title="Message Deleted",
