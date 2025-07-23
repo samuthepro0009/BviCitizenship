@@ -399,16 +399,30 @@ class ComprehensiveLogger:
             },
             {
                 'name': '📝 Content',
-                'value': f"```\n{message.content[:900]}{'...' if len(message.content) > 900 else ''}\n```" if message.content else '`No text content`',
+                'value': f"```\n{message.content[:900]}{'...' if len(message.content) > 900 else ''}\n```" if message.content else '*Message contains no text content*',
                 'inline': False
             }
         ]
         
+        # Add attachment information
         if message.attachments:
             attachment_info = '\n'.join([f"• {att.filename} ({att.size} bytes)" for att in message.attachments])
             fields.append({
                 'name': '📎 Attachments',
                 'value': attachment_info[:500] + ('...' if len(attachment_info) > 500 else ''),
+                'inline': False
+            })
+        
+        # Add embed information if present
+        if message.embeds:
+            embed_info = []
+            for i, embed in enumerate(message.embeds[:3]):  # Limit to first 3 embeds
+                embed_title = embed.title or "Untitled Embed"
+                embed_info.append(f"• **{embed_title}**" + (f" - {embed.description[:50]}..." if embed.description else ""))
+            
+            fields.append({
+                'name': '🔗 Embeds',
+                'value': '\n'.join(embed_info)[:500] + ('...' if len('\n'.join(embed_info)) > 500 else ''),
                 'inline': False
             })
         
@@ -442,12 +456,12 @@ class ComprehensiveLogger:
             },
             {
                 'name': '📝 Before',
-                'value': f"```\n{before.content[:450]}{'...' if len(before.content) > 450 else ''}\n```" if before.content else '`No content`',
+                'value': f"```\n{before.content[:450]}{'...' if len(before.content) > 450 else ''}\n```" if before.content else '*No text content*',
                 'inline': False
             },
             {
                 'name': '📝 After',
-                'value': f"```\n{after.content[:450]}{'...' if len(after.content) > 450 else ''}\n```" if after.content else '`No content`',
+                'value': f"```\n{after.content[:450]}{'...' if len(after.content) > 450 else ''}\n```" if after.content else '*No text content*',
                 'inline': False
             }
         ]
