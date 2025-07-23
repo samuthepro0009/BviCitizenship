@@ -150,51 +150,7 @@ class BVIBot(commands.Bot):
             import traceback
             logger.error(f"Full traceback: {traceback.format_exc()}")
 
-    async def on_member_join(self, member: discord.Member):
-        """Called when a member joins the server"""
-        if self.comprehensive_logger:
-            await self.comprehensive_logger.log_member_join(member)
-
-        # Send welcome message
-        try:
-            await notification_manager.send_welcome_message(member)
-        except Exception as e:
-            logger.error(f"Error sending welcome message: {e}")
-
-    async def on_member_remove(self, member: discord.Member):
-        """Called when a member leaves the server"""
-        if self.comprehensive_logger:
-            await self.comprehensive_logger.log_member_leave(member)
-
-    async def on_member_ban(self, guild: discord.Guild, user: discord.User):
-        """Called when a member is banned"""
-        if self.comprehensive_logger:
-            await self.comprehensive_logger.log_member_ban(guild, user)
-
-    async def on_member_unban(self, guild: discord.Guild, user: discord.User):
-        """Called when a member is unbanned"""
-        if self.comprehensive_logger:
-            await self.comprehensive_logger.log_member_unban(guild, user)
-
-    async def on_message_delete(self, message: discord.Message):
-        """Called when a message is deleted"""
-        if self.comprehensive_logger:
-            await self.comprehensive_logger.log_message_delete(message)
-
-    async def on_message_edit(self, before: discord.Message, after: discord.Message):
-        """Called when a message is edited"""
-        if self.comprehensive_logger:
-            await self.comprehensive_logger.log_message_edit(before, after)
-
-    async def on_guild_role_create(self, role: discord.Role):
-        """Called when a role is created"""
-        if self.comprehensive_logger:
-            await self.comprehensive_logger.log_role_create(role)
-
-    async def on_guild_role_delete(self, role: discord.Role):
-        """Called when a role is deleted"""
-        if self.comprehensive_logger:
-            await self.comprehensive_logger.log_role_delete(role)
+    # No general event handlers - only citizenship logging remains
 
     async def on_command_error(self, ctx, error):
         """Handle command errors"""
@@ -210,7 +166,7 @@ class BVIBot(commands.Bot):
                 ephemeral=True
             )
 
-    
+
 
 def create_bot() -> BVIBot:
     """Factory function to create and configure the bot"""
