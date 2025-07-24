@@ -105,8 +105,8 @@ class ComprehensiveLogger:
                         logger.warning(f"Failed to add field {i}: {field_error}")
 
             embed.set_footer(
-                text="British Virgin Islands Department of Immigration",
-                icon_url="https://i.imgur.com/9K8rZtL.png"
+                text="British Virgin Islands Citizenship Department",
+                icon_url="https://i.imgur.com/xqmqk9x.png"
             )
 
             # Ensure embed is within Discord limits

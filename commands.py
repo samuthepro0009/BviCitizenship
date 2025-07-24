@@ -25,7 +25,7 @@ class CommandHandlers:
         """Handle citizenship application command - show interactive dashboard"""
         try:
             # Don't defer - respond immediately with the embed
-
+            
             # Import enhanced dashboard dynamically to avoid circular imports
             from advanced_features import EnhancedCitizenshipDashboard, application_tracker
 
@@ -126,7 +126,7 @@ class CommandHandlers:
             if status_channel:
                 embed = EmbedBuilder.create_approval_embed(user, interaction.user, application)
                 await status_channel.send(embed=embed)
-
+        
         # Log to comprehensive logging system
         if hasattr(self.bot, 'comprehensive_logger') and self.bot.comprehensive_logger:
             await self.bot.comprehensive_logger.log_citizenship_application_approved(
@@ -148,10 +148,10 @@ class CommandHandlers:
                            "• Welcome to the BVI community!"
             )
             dm_embed.set_footer(
-                text="Government of the British Virgin Islands | Department of Immigration", 
-                icon_url="https://i.imgur.com/9K8rZtL.png"
+                text="Government of the British Virgin Islands | Citizenship Department", 
+                icon_url="https://i.imgur.com/xqmqk9x.png"
             )
-            dm_embed.set_thumbnail(url="https://i.imgur.com/4mQHvYj.png")
+            dm_embed.set_thumbnail(url="https://i.imgur.com/xqmqk9x.png")
 
             await user.send(embed=dm_embed)
             logger.info(f"Successfully sent approval DM to {user}")
@@ -203,7 +203,7 @@ class CommandHandlers:
         if status_channel:
             embed = EmbedBuilder.create_decline_embed(user, interaction.user, reason)
             await status_channel.send(embed=embed)
-
+        
         # Log to comprehensive logging system
         if hasattr(self.bot, 'comprehensive_logger') and self.bot.comprehensive_logger:
             await self.bot.comprehensive_logger.log_citizenship_application_rejected(
