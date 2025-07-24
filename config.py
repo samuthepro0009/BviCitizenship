@@ -14,7 +14,7 @@ import logging
 CHANNEL_IDS = {
     "citizenship_log": 1397315480540151901,      # Channel for logging application submissions
     "citizenship_status": 1397315480540151903,   # Channel for posting approval/decline updates  
-    "mod_log": 1397315480540151900               # Channel for moderation actions (bans, etc.)
+    "mod_log": 1397315480540151900               # Channel for moderation actions
 }
 
 # Channel names for bot operations (fallback method)
@@ -43,7 +43,7 @@ class EmbedConfig:
     application_submitted: int = 0x3498db  # Blue
     application_approved: int = 0x2ecc71   # Green
     application_declined: int = 0xe74c3c   # Red
-    ban_executed: int = 0xf39c12           # Orange
+
     error_color: int = 0x95a5a6            # Gray
 
 @dataclass
@@ -56,7 +56,7 @@ class MessageConfig:
     # Permission messages
     no_permission: str = "❌ You don't have permission to use this command."
     no_citizenship_permission: str = "❌ You need the Admin or Citizenship Manager role to use this command."
-    no_ban_permission: str = "❌ You need the Admin role to ban users."
+
     no_application_found: str = "❌ No pending application found for {user}."
     
     # Success messages
@@ -65,8 +65,7 @@ class MessageConfig:
     
     # Error messages
     roblox_username_not_found: str = "❌ Could not find Roblox username for {user}. Make sure they have submitted a citizenship application with their Roblox username."
-    ban_failed: str = "❌ Failed to ban user from Roblox place. Please check the place ID and try again."
-    ban_error: str = "❌ An error occurred while processing the ban command."
+
     
     # DM messages
     approval_dm_title: str = "🎉 Citizenship Application Approved!"
@@ -115,17 +114,13 @@ class CommandConfig:
     decline_user_param: str = "The user whose application to decline"
     decline_reason_param: str = "Reason for declining the application"
     
-    ban_name: str = "ban"
-    ban_description: str = "Ban a user from a Roblox place"
-    ban_user_param: str = "The Discord user to ban"
-    ban_place_id_param: str = "The Roblox place ID to ban from"
-    ban_reason_param: str = "Reason for the ban"
+
 
 # =========================================  
 # ROLE CONFIGURATION
 # =========================================
 
-# Admin roles (full permissions: ban users, manage citizenship)
+# Admin roles (full permissions: manage citizenship)
 ADMIN_ROLES = [
     # Add your admin role IDs here, one per line
     # Example:
@@ -133,7 +128,7 @@ ADMIN_ROLES = [
     # 123123213,
 ]
 
-# Citizenship manager roles (citizenship management only, cannot ban users)  
+# Citizenship manager roles (citizenship management only)  
 CITIZENSHIP_MANAGER_ROLES = [
     # Add your citizenship manager role IDs here, one per line
     # Example:

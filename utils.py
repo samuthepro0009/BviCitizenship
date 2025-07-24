@@ -155,22 +155,7 @@ class EmbedBuilder:
         
         return embed
     
-    @staticmethod
-    def create_ban_embed(user: discord.Member, roblox_username: str, place_id: str, 
-                        reason: str, banned_by: discord.User) -> discord.Embed:
-        """Create an embed for Roblox ban execution"""
-        embed = EmbedBuilder.create_base_embed(
-            title="🔨 Roblox Ban Executed",
-            color=settings.embeds.ban_executed
-        )
-        
-        embed.add_field(name="Discord User", value=user.mention, inline=True)
-        embed.add_field(name="Roblox Username", value=roblox_username, inline=True)
-        embed.add_field(name="Place ID", value=place_id, inline=True)
-        embed.add_field(name="Reason", value=reason, inline=False)
-        embed.add_field(name="Banned by", value=banned_by.mention, inline=True)
-        
-        return embed
+
     
     @staticmethod
     def create_dm_approval_embed() -> discord.Embed:
@@ -234,10 +219,7 @@ class PermissionManager:
         return (PermissionManager.has_admin_role(member, admin_role_id) or 
                 PermissionManager.has_citizenship_manager_role(member, citizenship_manager_role_id))
     
-    @staticmethod
-    def can_ban_users(member: discord.Member, admin_role_id: int) -> bool:
-        """Check if member can ban users (only admins can ban)"""
-        return PermissionManager.has_admin_role(member, admin_role_id)
+
 
 class DMManager:
     """Manages direct message operations"""
@@ -298,34 +280,3 @@ class ApplicationManager:
             return True
         return False
 
-class RobloxAPI:
-    """Placeholder class for Roblox API integration"""
-    
-    @staticmethod
-    async def ban_user_from_place(username: str, place_id: str, reason: str, api_key: str) -> bool:
-        """
-        Placeholder function for Roblox API integration
-        In a real implementation, this would make API calls to Roblox
-        """
-        try:
-            logger.info(f"Attempting to ban {username} from place {place_id} for: {reason}")
-            
-            # Example of what a real implementation might look like:
-            # headers = {'Authorization': f'Bearer {api_key}'}
-            # data = {
-            #     'username': username,
-            #     'place_id': place_id,
-            #     'reason': reason
-            # }
-            # async with aiohttp.ClientSession() as session:
-            #     async with session.post('https://api.roblox.com/v1/bans', 
-            #                           headers=headers, json=data) as response:
-            #         return response.status == 200
-            
-            # For now, simulate success with delay
-            await asyncio.sleep(1)
-            return True
-            
-        except Exception as e:
-            logger.error(f"Error banning from Roblox: {e}")
-            return False

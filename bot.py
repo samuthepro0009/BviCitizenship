@@ -82,22 +82,7 @@ class BVIBot(commands.Bot):
         ):
             await self.command_handler.handle_citizenship_decline(interaction, user, reason)
 
-        @self.tree.command(
-            name=settings.commands.ban_name, 
-            description=settings.commands.ban_description
-        )
-        @app_commands.describe(
-            user=settings.commands.ban_user_param,
-            place_id=settings.commands.ban_place_id_param,
-            reason=settings.commands.ban_reason_param
-        )
-        async def ban_command(
-            interaction: discord.Interaction, 
-            user: discord.Member, 
-            place_id: str, 
-            reason: str = "No reason provided"
-        ):
-            await self.command_handler.handle_ban_command(interaction, user, place_id, reason)
+
 
     async def on_ready(self):
         """Called when the bot is ready"""

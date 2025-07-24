@@ -9,7 +9,7 @@ from discord import app_commands
 from config import settings
 from utils import (
     ChannelManager, EmbedBuilder, PermissionManager, 
-    DMManager, ApplicationManager, RobloxAPI
+    DMManager, ApplicationManager
 )
 from models import CitizenshipApplication, ApplicationStatus
 from image_config import get_image_url
@@ -50,7 +50,7 @@ class CommandHandlers:
 
             # Set the footer with BVI coat of arms icon
             embed.set_footer(
-                text="Government of the British Virgin Islands | Citizenship Department", 
+                text="Government of the British Virgin Islands | Department of Immigration", 
                 icon_url=get_image_url("footer_icon")
             )
 
@@ -149,7 +149,7 @@ class CommandHandlers:
                            "• Welcome to the BVI community!"
             )
             dm_embed.set_footer(
-                text="Government of the British Virgin Islands | Citizenship Department", 
+                text="Government of the British Virgin Islands | Department of Immigration", 
                 icon_url=get_image_url("footer_icon")
             )
             dm_embed.set_thumbnail(url=get_image_url("thumbnail"))
@@ -228,7 +228,7 @@ class CommandHandlers:
             )
             dm_embed.set_image(url=get_image_url("banner"))
             dm_embed.set_footer(
-                text="Government of the British Virgin Islands | Citizenship Department", 
+                text="Government of the British Virgin Islands | Department of Immigration", 
                 icon_url=get_image_url("footer_icon")
             )
             dm_embed.set_thumbnail(url=get_image_url("thumbnail"))
@@ -246,60 +246,3 @@ class CommandHandlers:
             ephemeral=True
         )
 
-    async def handle_ban_command(self, interaction: discord.Interaction, user: discord.Member, 
-                               place_id: str, reason: str = "No reason provided"):
-        """Handle Roblox ban command"""
-        # Check admin permissions (only admins can ban, not citizenship managers)
-        user_role_ids = [role.id for role in interaction.user.roles]
-        if not settings.has_admin_permission(user_role_ids):
-            await interaction.response.send_message(
-                settings.messages.no_ban_permission,
-                ephemeral=True
-            )
-            return
-
-        await interaction.response.defer(ephemeral=True)
-
-        try:
-            # Get user's Roblox username from their application
-            roblox_username = ApplicationManager.get_roblox_username_from_applications(
-                self.bot.pending_applications, user.id
-            )
-
-            if not roblox_username:
-                await interaction.followup.send(
-                    settings.messages.roblox_username_not_found.format(user=user.mention),
-                    ephemeral=True
-                )
-                return
-
-            # Execute ban through Roblox API
-            success = await RobloxAPI.ban_user_from_place(
-                roblox_username, place_id, reason, settings.get_roblox_api_key()
-            )
-
-            if success:
-                # Create success embed
-                embed = EmbedBuilder.create_ban_embed(
-                    user, roblox_username, place_id, reason, interaction.user
-                )
-
-                await interaction.followup.send(embed=embed, ephemeral=True)
-
-                # Log to moderation channel
-                mod_log_channel = ChannelManager.get_mod_log_channel(interaction.guild)
-                if mod_log_channel:
-                    await mod_log_channel.send(embed=embed)
-
-            else:
-                await interaction.followup.send(
-                    settings.messages.ban_failed,
-                    ephemeral=True
-                )
-
-        except Exception as e:
-            logger.error(f"Error in ban command: {e}")
-            await interaction.followup.send(
-                settings.messages.ban_error,
-                ephemeral=True
-            )
