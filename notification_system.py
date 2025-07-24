@@ -11,6 +11,7 @@ from enum import Enum
 import asyncio
 from config import settings
 from utils import DMManager, EmbedBuilder
+from image_config import get_image_url
 
 logger = logging.getLogger(__name__)
 
@@ -113,7 +114,7 @@ class NotificationManager:
                 embed.timestamp = discord.utils.utcnow()
             
             if template.include_thumbnail:
-                embed.set_thumbnail(url="https://i.imgur.com/xqmqk9x.png")
+                embed.set_thumbnail(url=get_image_url("thumbnail"))
             
             # Add custom fields if provided
             if custom_fields:
@@ -126,7 +127,7 @@ class NotificationManager:
             
             embed.set_footer(
                 text=template.footer_text,
-                icon_url="https://i.imgur.com/xqmqk9x.png"
+                icon_url=get_image_url("footer_icon")
             )
             
             # Send DM
@@ -255,10 +256,10 @@ class AnnouncementSystem:
                 timestamp=discord.utils.utcnow()
             )
             
-            embed.set_thumbnail(url="https://i.imgur.com/xqmqk9x.png")
+            embed.set_thumbnail(url=get_image_url("thumbnail"))
             embed.set_footer(
                 text="Government of the British Virgin Islands",
-                icon_url="https://i.imgur.com/xqmqk9x.png"
+                icon_url=get_image_url("footer_icon")
             )
             
             # Prepare message content

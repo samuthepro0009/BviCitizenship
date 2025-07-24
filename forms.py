@@ -4,6 +4,7 @@ import discord
 from config import settings
 from utils import ChannelManager, EmbedBuilder
 from models import CitizenshipApplication
+from image_config import get_image_url
 
 logger = logging.getLogger(__name__)
 
@@ -96,9 +97,9 @@ class CitizenshipDashboard(discord.ui.View):
         )
         embed.set_footer(
             text="Government of the British Virgin Islands | Citizenship Department", 
-            icon_url="https://i.imgur.com/xqmqk9x.png"
+            icon_url=get_image_url("footer_icon")
         )
-        embed.set_thumbnail(url="https://i.imgur.com/xqmqk9x.png")
+        embed.set_thumbnail(url=get_image_url("thumbnail"))
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
     @discord.ui.button(
@@ -128,9 +129,9 @@ class CitizenshipDashboard(discord.ui.View):
         )
         embed.set_footer(
             text="Government of the British Virgin Islands | Citizenship Department", 
-            icon_url="https://i.imgur.com/xqmqk9x.png"
+            icon_url=get_image_url("footer_icon")
         )
-        embed.set_thumbnail(url="https://i.imgur.com/xqmqk9x.png")
+        embed.set_thumbnail(url=get_image_url("thumbnail"))
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
     async def on_timeout(self):

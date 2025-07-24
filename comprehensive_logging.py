@@ -8,6 +8,7 @@ from typing import Optional, Dict, Any
 from datetime import datetime
 import asyncio
 from config import settings
+from image_config import get_image_url
 
 logger = logging.getLogger(__name__)
 
@@ -106,7 +107,7 @@ class ComprehensiveLogger:
 
             embed.set_footer(
                 text="British Virgin Islands Citizenship Department",
-                icon_url="https://i.imgur.com/xqmqk9x.png"
+                icon_url=get_image_url("footer_icon")
             )
 
             # Ensure embed is within Discord limits

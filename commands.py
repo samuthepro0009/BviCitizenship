@@ -12,6 +12,7 @@ from utils import (
     DMManager, ApplicationManager, RobloxAPI
 )
 from models import CitizenshipApplication, ApplicationStatus
+from image_config import get_image_url
 
 logger = logging.getLogger(__name__)
 
@@ -45,16 +46,16 @@ class CommandHandlers:
             )
 
             # Use the uploaded BVI coat of arms images from imgur
-            embed.set_image(url="https://i.imgur.com/Pf2iXAV.png")
+            embed.set_image(url=get_image_url("banner"))
 
             # Set the footer with BVI coat of arms icon
             embed.set_footer(
                 text="Government of the British Virgin Islands | Citizenship Department", 
-                icon_url="https://i.imgur.com/xqmqk9x.png"
+                icon_url=get_image_url("footer_icon")
             )
 
             # Add thumbnail for additional branding
-            embed.set_thumbnail(url="https://i.imgur.com/xqmqk9x.png")
+            embed.set_thumbnail(url=get_image_url("thumbnail"))
 
             # Create the enhanced interactive dashboard
             dashboard = EnhancedCitizenshipDashboard(application_tracker)
@@ -149,9 +150,9 @@ class CommandHandlers:
             )
             dm_embed.set_footer(
                 text="Government of the British Virgin Islands | Citizenship Department", 
-                icon_url="https://i.imgur.com/xqmqk9x.png"
+                icon_url=get_image_url("footer_icon")
             )
-            dm_embed.set_thumbnail(url="https://i.imgur.com/xqmqk9x.png")
+            dm_embed.set_thumbnail(url=get_image_url("thumbnail"))
 
             await user.send(embed=dm_embed)
             logger.info(f"Successfully sent approval DM to {user}")
@@ -225,12 +226,12 @@ class CommandHandlers:
                            f"• Contact our support team if you have questions\n"
                            f"• Review citizenship requirements before reapplying"
             )
-            dm_embed.set_image(url="https://i.imgur.com/Pf2iXAV.png")
+            dm_embed.set_image(url=get_image_url("banner"))
             dm_embed.set_footer(
                 text="Government of the British Virgin Islands | Citizenship Department", 
-                icon_url="https://i.imgur.com/xqmqk9x.png"
+                icon_url=get_image_url("footer_icon")
             )
-            dm_embed.set_thumbnail(url="https://i.imgur.com/xqmqk9x.png")
+            dm_embed.set_thumbnail(url=get_image_url("thumbnail"))
 
             await user.send(embed=dm_embed)
             logger.info(f"Successfully sent decline DM to {user}")
