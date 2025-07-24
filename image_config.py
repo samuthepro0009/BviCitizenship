@@ -3,9 +3,9 @@ Image configuration for the BVI Discord Bot
 Centralized management of all image URLs
 """
 
-# New BVI Department of Immigration images - Updated with new images  
-DEPARTMENT_ICON_URL = "https://i.postimg.cc/3xPzFLPr/department-icon.png"
-DEPARTMENT_BANNER_URL = "https://i.postimg.cc/htDkZGS4/department-banner.png"
+# New BVI Department of Immigration images - Uploaded to imgur
+DEPARTMENT_ICON_URL = "https://i.imgur.com/UOoJ0NK.png"
+DEPARTMENT_BANNER_URL = "https://i.imgur.com/424B8Hu.png"
 
 # Legacy URLs (backup)
 LEGACY_ICON_URL = "https://i.imgur.com/xqmqk9x.png"
